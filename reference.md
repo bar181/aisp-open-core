@@ -16,6 +16,7 @@ This document serves dual audiences simultaneously. Each concept is presented fi
 | [Symbol Reference](#symbol-reference) | ✓ | — | Quick lookup for AISP glyphs |
 | [Validation Evidence](#validation-evidence) | ✓ | ✓ | Empirical results and benchmarks |
 | [Complete AISP Specification](#complete-aisp-specification) | — | ✓ | Full formal spec for AI ingestion |
+| [Validation Tools](#validation-tools) | ✓ | — | npm and Rust validation packages |
 
 ---
 
@@ -378,7 +379,11 @@ A simple game specification was written in both prose and AISP, then implemented
 
 #### SWE Benchmark Results
 
+<<<<<<< HEAD
 Using AISP Strict (older version) under rigorous test conditions:
+=======
+Using AISP Strict (older version) on the SWE-Bench verified 500 subset under rigorous test conditions:
+>>>>>>> 560fdf5 (updated NPM CRATE evidence)
 
 | Condition | Status |
 |-----------|:------:|
@@ -388,7 +393,13 @@ Using AISP Strict (older version) under rigorous test conditions:
 | No gold tests | ✓ |
 | Cold start (learning disabled) | ✓ |
 
+<<<<<<< HEAD
 **Result: +22% improvement over base model**
+=======
+**Result: +22% improvement over base model** (estimated 72-78% absolute performance range)
+
+*Note: Tested with AISP Strict, not the current 5.1 specification. We're optimistic AISP 5.1 can show further improvements.*
+>>>>>>> 560fdf5 (updated NPM CRATE evidence)
 
 #### Pipeline Success Rates
 
@@ -654,11 +665,102 @@ The following is the complete formal specification of this repository, suitable 
 
 ---
 
+<<<<<<< HEAD
+=======
+## Validation Tools
+
+Validate AISP documents programmatically with published packages:
+
+### npm / Node.js
+
+```bash
+# Install
+npm install aisp-validator
+
+# CLI usage
+npx aisp-validator validate your-spec.aisp
+npx aisp-validator validate your-spec.aisp --long  # detailed output
+```
+
+```javascript
+// Programmatic usage
+import { validate } from 'aisp-validator';
+
+const doc = `𝔸1.0.test@2026-01-16
+γ≔test
+⟦Ω:Meta⟧{ ∀D:Ambig(D)<0.02 }
+⟦Σ:Types⟧{ T≜ℕ }
+⟦Γ:Rules⟧{ ∀x:T:x≥0 }
+⟦Λ:Funcs⟧{ f≜λx.x }
+⟦Ε⟧⟨δ≜0.75;τ≜◊⁺⁺⟩`;
+
+const result = validate(doc);
+console.log(result.valid);  // true
+console.log(result.tier);   // "◊⁺⁺"
+console.log(result.delta);  // 0.75
+```
+
+**Registry:** [npmjs.com/package/aisp-validator](https://www.npmjs.com/package/aisp-validator)
+
+### Rust / crates.io
+
+```toml
+# Cargo.toml
+[dependencies]
+aisp = "0.1"
+```
+
+```rust
+use aisp::{validate, Tier, is_aisp_char, count_symbols};
+
+fn main() {
+    let doc = r#"
+𝔸1.0.test@2026-01-16
+γ≔test
+⟦Ω:Meta⟧{ ∀D:Ambig(D)<0.02 }
+⟦Σ:Types⟧{ T≜ℕ }
+⟦Γ:Rules⟧{ ∀x:T:x≥0 }
+⟦Λ:Funcs⟧{ f≜λx.x }
+⟦Ε⟧⟨δ≜0.75;τ≜◊⁺⁺⟩
+"#;
+
+    let result = validate(doc);
+    println!("Valid: {}", result.valid);           // true
+    println!("Tier: {}", result.tier.symbol());    // ◊⁺⁺
+    println!("Delta: {:.3}", result.delta);        // 0.750
+
+    // Helper functions
+    println!("is_aisp_char('∀'): {}", is_aisp_char('∀'));  // true
+    println!("count_symbols(\"∀x∈S\"): {}", count_symbols("∀x∈S"));  // 2
+}
+```
+
+**Registry:** [crates.io/crates/aisp](https://crates.io/crates/aisp)
+
+### Validation Result Structure
+
+Both implementations return equivalent result structures:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `valid` | bool | Document passes all validation rules |
+| `tier` | Tier | Quality tier: ◊⁺⁺, ◊⁺, ◊, ◊⁻, or ⊘ |
+| `delta` | float | Semantic density score [0, 1] |
+| `ambiguity` | float | Measured ambiguity [0, 1] |
+| `blocks` | object | Per-block validation results |
+
+---
+
+>>>>>>> 560fdf5 (updated NPM CRATE evidence)
 ## Quick Start
 
 1. **For AI Agents:** Copy the [Complete AISP Specification](#complete-aisp-specification) into your context
 2. **For Humans Learning:** Start with [Core Concept](#core-concept), then [Three-Layer Architecture](#three-layer-architecture)
 3. **For Reference:** Use [Symbol Reference](#symbol-reference) and [Feature Catalog](#feature-catalog) as lookups
+<<<<<<< HEAD
+=======
+4. **For Validation:** Use [Validation Tools](#validation-tools) to validate your AISP documents
+>>>>>>> 560fdf5 (updated NPM CRATE evidence)
 
 ---
 
@@ -670,6 +772,18 @@ The following is the complete formal specification of this repository, suitable 
 | [HUMAN_GUIDE.md](HUMAN_GUIDE.md) | Humans | Step-by-step tutorials |
 | [README.md](README.md) | Everyone | Introduction and overview |
 | [evidence/](evidence/) | Researchers | Empirical validation data |
+<<<<<<< HEAD
+=======
+| [validator/](validator/) | Developers | npm package source code |
+| [aisp-rust/](aisp-rust/) | Developers | Rust crate source code |
+
+### Published Packages
+
+| Package | Registry | Install |
+|---------|----------|---------|
+| aisp-validator | [npm](https://www.npmjs.com/package/aisp-validator) | `npm install aisp-validator` |
+| aisp | [crates.io](https://crates.io/crates/aisp) | `aisp = "0.1"` |
+>>>>>>> 560fdf5 (updated NPM CRATE evidence)
 
 ---
 

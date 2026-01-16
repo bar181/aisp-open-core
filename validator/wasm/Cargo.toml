@@ -1,0 +1,35 @@
+[package]
+name = "aisp-wasm"
+version = "0.1.0"
+edition = "2021"
+authors = ["vibecast"]
+description = "Ultra-condensed AISP type-checking kernel for WASM (<8KB)"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ruvnet/vibecast"
+keywords = ["aisp", "wasm", "type-theory", "lean-agentic", "embedded"]
+categories = ["wasm", "no-std", "embedded"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Minimal dependencies for size
+# lean-agentic integration via compatible types
+
+[features]
+default = []
+std = []  # Enable for testing only
+
+[profile.release]
+opt-level = "z"       # Optimize for size
+lto = true            # Link-time optimization
+codegen-units = 1     # Single codegen unit
+panic = "abort"       # No unwinding
+strip = true          # Strip symbols
+
+[profile.release.package."*"]
+opt-level = "z"
+
+[profile.dev]
+opt-level = 0
+debug = true

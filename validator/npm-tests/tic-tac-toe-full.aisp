@@ -1,0 +1,41 @@
+𝔸5.1.tic-tac-toe@2026-01-15
+γ≔game-full
+ρ≔⟨game,complete⟩
+
+⟦Ω:Meta⟧{
+  domain≜game
+  ∀D∈AISP:Ambig(D)<0.02
+}
+
+⟦Σ:Types⟧{
+  Player≜{X,O}
+  Cell≜{Empty,X,O}
+  Board≜Cell[9]
+  GameState≜Playing|Won(Player)|Draw
+}
+
+⟦Γ:Rules⟧{
+  ∀m:Valid(b,p)⇔b[p]=Empty∧p∈[0,8]
+  ∀w:Win(b,pl)⇔∃l∈Lines:∀c∈l:c=pl
+  Lines≜{rows,cols,diags}
+  Draw(b)⇔∀c∈b:c≠Empty∧¬∃p∈Player:Win(b,p)
+}
+
+⟦Λ:Funcs⟧{
+  new≜λ().⟨board≔[∅×9],state≔Playing,turn≔X⟩
+  move≜λ(g,p).⟨board≔g.board[p←g.turn],turn≔next(g.turn)⟩
+  check≜λb.∃p∈Player:Win(b,p)
+  next≜λp.if p=X then O else X
+}
+
+⟦Χ:Errors⟧{
+  E1⇒⟨code≔E001,msg≔"Invalid"⟩
+  E2⇒⟨code≔E002,msg≔"Over"⟩
+}
+
+⟦Δ:Contracts⟧{
+  pre≔Valid(g.board,p)
+  post≔result.board[p]=g.turn
+}
+
+⟦Ε⟧⟨δ≜0.82;φ≜100;τ≜◊⁺⁺;⊢valid;∎⟩

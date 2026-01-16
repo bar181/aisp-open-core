@@ -11,6 +11,8 @@
 
 > *"The assembly language for AI cognition—precise instructions that every AI understands exactly the same way."*
 
+**If you find this useful, please [star the repo](https://github.com/bar181/aisp-open-core)** — it helps others discover AISP.
+
 **Works natively with:** Claude, GPT-4, Gemini, Claude Code, Cursor, and any modern LLM.
 
 ---
@@ -79,7 +81,7 @@ Imagine giving the same recipe to 100 different chefs:
 **The Proof:**
 - Tic-Tac-Toe test: **6 ambiguities (prose) → 0 ambiguities (AISP)**
 - Technical precision: **43/100 (prose) → 95/100 (AISP)**
-- SWE Benchmark: **+22% over base model** (cold start, no hints, blind evaluation)
+- SWE Benchmark (AISP Strict): **+22% over base model** on verified 500 subset (blind, cold start)
 
 ---
 
@@ -96,15 +98,15 @@ Imagine giving the same recipe to 100 different chefs:
 
 ### SWE Benchmark (Software Engineering)
 
-Using an older AISP model (AISP Strict) with rigorous test conditions:
-- ✅ Blind evaluation (no cheating)
-- ✅ No text in hints
-- ✅ No gold patches or tests
+Using AISP Strict (an older version) on the SWE-Bench verified 500 subset with rigorous test conditions:
+- ✅ Blind evaluation (no instance-level hints)
+- ✅ No gold patches or gold tests
 - ✅ Cold start (learning systems disabled)
+- ✅ No text hints of any kind
 
-**Result: +22% improvement over base model**
+**Result: +22% improvement over base model** (estimated 72-78% absolute performance range)
 
-*Note: Formal testing with AISP 5.1 Platinum not yet started. Early results expected Q2 2026.*
+*Note: This was tested with AISP Strict, not the current 5.1 Platinum specification. Given the stricter test conditions and promising results, we're optimistic that AISP 5.1 can show further improvements. Formal validation planned for Q2 2026.*
 
 ### The Telephone Game Math
 
@@ -178,7 +180,7 @@ Every AISP document:
 
 **AISP Solution:** Safety constraints in orthogonal vector space (V_S) that can't be optimized out.
 
-**Impact:** Mathematical guarantee of safety rule preservation.
+**Impact:** Stronger preservation of safety rules through orthogonal encoding.
 
 ---
 
@@ -189,7 +191,7 @@ Every AISP document:
 
 **AISP Solution:** Formal specifications compile to deterministic implementations.
 
-**Evidence:** +22% SWE benchmark improvement (cold start conditions).
+**Evidence:** +22% SWE benchmark improvement with AISP Strict (cold start, blind evaluation).
 
 #### 6. Autonomous Vehicle Fleet Coordination
 **The Problem:** Self-driving cars must make split-second coordination decisions with zero misunderstanding.
@@ -223,9 +225,9 @@ Every AISP document:
 
 ### Tier 3: Emerging Applications (70-79% Confidence)
 
-#### 10. GPU-Free Computer Vision (Paradigm Shift)
+#### 10. GPU-Free Computer Vision (Speculative)
 
-**The Revolutionary Concept:**
+**The Concept:**
 
 Traditional computer vision requires:
 - Expensive GPUs ($10K-$100K)
@@ -434,7 +436,7 @@ AISP 5.1 Platinum is the culmination of Bradley Ross's Master's capstone project
 | Evidence Type | Source | Finding |
 |--------------|--------|---------|
 | Comparative Analysis | Tic-Tac-Toe Test | +121% technical precision |
-| Benchmark | SWE-Bench (Blind) | +22% over base model |
+| Benchmark | SWE-Bench Verified 500 (AISP Strict) | +22% over base model |
 | Independent Review | GitHub Copilot Analysis | Zero-overhead validated |
 | Token Analysis | OpenAI Tokenizer | 8,817 tokens measured |
 
@@ -508,6 +510,52 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 ---
 
+## 🛠️ Validation Tools
+
+Validate your AISP documents programmatically:
+
+### npm (Node.js / JavaScript)
+
+```bash
+# Install globally
+npm install -g aisp-validator
+
+# Validate a file
+npx aisp-validator validate your-spec.aisp
+
+# With detailed output
+npx aisp-validator validate your-spec.aisp --long
+```
+
+```javascript
+// Use in Node.js
+import { validate } from 'aisp-validator';
+
+const result = validate(yourDocument);
+console.log(result.valid, result.tier); // true, "◊⁺⁺"
+```
+
+**npm:** [npmjs.com/package/aisp-validator](https://www.npmjs.com/package/aisp-validator)
+
+### Rust
+
+```toml
+# Cargo.toml
+[dependencies]
+aisp = "0.1"
+```
+
+```rust
+use aisp::{validate, Tier};
+
+let result = validate(your_document);
+println!("Valid: {}, Tier: {}", result.valid, result.tier.symbol());
+```
+
+**crates.io:** [crates.io/crates/aisp](https://crates.io/crates/aisp)
+
+---
+
 ## 🗺️ Roadmap
 
 | Phase | Status | Target |
@@ -515,9 +563,10 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 | AISP 5.1 Platinum Specification | ✅ Complete | January 2026 |
 | Tic-Tac-Toe Validation | ✅ Complete | January 2026 |
 | SWE Benchmark (AISP Strict) | ✅ Complete | +22% validated |
+| npm Validator (aisp-validator) | ✅ Complete | v0.3.0 |
+| Rust Crate (aisp) | ✅ Complete | v0.1.0 |
 | Harvard Capstone Submission | 🔄 In Progress | May 2026 |
 | AISP 5.1 SWE Benchmark | 📅 Planned | Q1 2026 |
-| Parser & Validator Release | 📅 Planned | Q1 2026 |
 | AISP Lite (Human-Friendly) | 📅 Planned | Q1 2026 |
 | AISP Elite Agentics Team (Office Hours to Build Stuff - for Humans) | 📅 Planned | Q1 2026 |
 
@@ -547,6 +596,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 ---
 
-*Last Updated: January 12, 2026*
+*Last Updated: January 16, 2026*
 *Version: 5.1 Platinum*
 *Evidence: δ≜0.78 • φ≜96 • τ≜◊⁺⁺*

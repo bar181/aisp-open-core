@@ -1,0 +1,34 @@
+𝔸5.1.tic-tac-toe@2026-01-15
+γ≔game-standard
+ρ≔⟨game,turn-based⟩
+
+⟦Ω:Meta⟧{
+  domain≜game
+  version≜1.0.0
+  ∀D∈AISP:Ambig(D)<0.02
+  Target≜AI-Agents
+}
+
+⟦Σ:Types⟧{
+  Player≜{X,O}
+  Cell≜{Empty,X,O}
+  Board≜Cell[9]
+  GameState≜{Playing,Won(Player),Draw}
+  Position≜ℕ∈[0,8]
+}
+
+⟦Γ:Rules⟧{
+  ∀move:ValidMove(board,pos)⇔board[pos]=Empty
+  ∀win:WinCondition⇔∃line∈Lines:∀c∈line:c=player
+  Lines≜{rows,cols,diags}
+  ∀game:DrawCondition⇔¬∃empty∈Board∧¬WinCondition
+}
+
+⟦Λ:Funcs⟧{
+  makeMove≜λ(board,pos,player).board[pos]←player
+  checkWin≜λboard.∃p∈Player:WinCondition(board,p)
+  nextPlayer≜λp.if p=X then O else X
+  checkDraw≜λboard.∀c∈board:c≠Empty∧¬checkWin(board)
+}
+
+⟦Ε⟧⟨δ≜0.65;φ≜100;τ≜◊⁺⟩

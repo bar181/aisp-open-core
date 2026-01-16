@@ -1,0 +1,336 @@
+# AISP Specification: Horror Narrative
+
+**Version:** 5.1 Platinum  
+**Domain:** Creative Fiction - AI Disruption Horror  
+**Target Output:** <800 words  
+
+---
+
+## Header
+
+```aisp
+𝔸5.1.horror_narrative@2026-01-13
+γ≔narrative.ai_disruption.horror
+ρ≔⟨quotes,story,landmark,antihero,transformation⟩
+⊢narrative_complete∧quotes_memorable∧δ≥0.95
+```
+
+---
+
+## ⟦Ω:Foundation⟧ — Metalogic & Constraints
+
+```aisp
+⟦Ω:Foundation⟧{
+  ;; Core Invariants
+  ∀D∈Story:Ambig(D)<0.02
+  ∀Quote∈Q:Impact(Quote)≥τ_memorable
+  ∀Scene∈S:Detail(Scene)≥δ_vivid
+  
+  ;; Narrative Physics
+  Doc≜𝔸≫Quotes≫TwoSentenceHorror≫Scene≫Change≫Relevance≫AntiHero≫Landmark
+  WordLimit≜800
+  ∀output:|Tok(output)|≤WordLimit
+  
+  ;; Thematic Constraints
+  Theme≜{ai_bubble,status_quo_fear,obsolescence,comfortable_extinction}
+  Tone≜{epic,horror,prophetic,jobs_style}
+  ∀content:Theme⊂content∧Tone∈content
+}
+```
+
+---
+
+## ⟦Σ:Types⟧ — Type Definitions
+
+```aisp
+⟦Σ:Types⟧{
+  ;; Quote Types
+  Quote≜⟨text:𝕊,category:{epic,horror,deep_fear},impact:ℝ[0,1],attribution:𝕊⟩
+  QuoteSet≜Vec n Quote∧n≥5
+  τ_memorable≜0.85
+  
+  ;; Story Components
+  TwoSentenceHorror≜⟨setup:𝕊,twist:𝕊⟩∧|setup⧺twist|≤50words
+  Scene≜⟨setting:𝕊,sensory:Vec 5 Sense,atmosphere:𝕊,tension:ℝ[0,1]⟩
+  Change≜⟨before:State,catalyst:Event,after:State,irreversibility:𝔹⟩
+  Relevance≜⟨universal_fear:𝕊,contemporary_parallel:𝕊,emotional_hook:𝕊⟩
+  
+  ;; Character Types
+  AntiHero≜⟨name:𝕊,flaw:𝕊,sympathetic_quality:𝕊,arc:{resistance→recognition→reckoning}⟩
+  
+  ;; Landmark Story Aspects
+  Landmark≜⟨iconic_moment:𝕊,quotable_line:𝕊,thematic_resonance:𝕊,cultural_timing:𝕊,
+             emotional_truth:𝕊,structural_innovation:𝕊,universal_applicability:𝕊⟩
+  
+  ;; Quality Tiers
+  ◊≜{◊⁺⁺≻◊⁺≻◊≻◊⁻≻⊘}
+  ◊⁺⁺↦δ≥0.95;target
+}
+```
+
+---
+
+## ⟦Γ:Rules⟧ — Generation Rules
+
+```aisp
+⟦Γ:Rules⟧{
+  ;; Quote Generation Rules
+  ∀q∈QuoteSet:Jobs_Style(q)⇒Pithy(q)∧Contrarian(q)∧Memorable(q)
+  ∀q:category=epic⇒Aspirational(q)∧Uncomfortable_Truth(q)
+  ∀q:category=horror⇒Visceral(q)∧Recognition_Delay(q)
+  ∀q:category=deep_fear⇒Status_Quo_Attack(q)∧Personal(q)
+  
+  ;; Narrative Structure Rules
+  TwoSentenceHorror.setup⇒Normalcy∧False_Comfort
+  TwoSentenceHorror.twist⇒Inversion∧Delayed_Realization
+  
+  Scene.tension≥0.8⇒Imminent_Change∧No_Escape
+  Change.irreversibility=⊤⇒No_Return∧New_Normal
+  
+  ;; Anti-Hero Construction
+  AntiHero.flaw≡Hubris∨Denial∨Comfortable_Blindness
+  AntiHero.sympathetic_quality≡Audience_Self_Recognition
+  
+  ;; Landmark Criteria
+  ∀story:Landmark(story)⇔Timeless(story)∧Quotable(story)∧Emotionally_True(story)
+}
+```
+
+---
+
+## ⟦Λ:Quotes⟧ — Quote Specifications
+
+```aisp
+⟦Λ:Quotes⟧{
+  ;; EPIC QUOTES - Required themes
+  Q_epic≜{contrarian_wisdom,empire_exception_fallacy,bubble_inversion}
+  
+  ;; HORROR QUOTES - Required themes
+  Q_horror≜{slow_motion_replacement,passive_obsolescence,final_meeting_normalcy}
+  
+  ;; DEEP FEAR QUOTES - Required themes
+  Q_fear≜{comfort_zone_decay,status_quo_velocity,identity_bet}
+}
+```
+
+---
+
+## ⟦Λ:TwoSentenceHorror⟧ — Hook Structure
+
+```aisp
+⟦Λ:TwoSentenceHorror⟧{
+  ;; Structure requirements
+  Setup≜Protagonist∧Years_of_expertise∧Perceived_irreplaceability
+  Twist≜AI_documentation∧Specific_timeframe∧Self_deception_revealed
+  
+  ;; Semantic payload
+  Core_inversion≜"irreplaceable"→"self_told_story"
+  Time_specificity≜Required(minutes,seconds)
+}
+```
+
+---
+
+## ⟦Λ:Scene⟧ — Sensory Construction
+
+```aisp
+⟦Λ:Scene⟧{
+  ;; Setting requirements
+  Setting≜{corporate_environment,height_metaphor,isolation,pre_dawn}
+  
+  ;; Five senses required
+  Sensory≜{
+    sight≔reflection_ghost_metaphor∧dashboard_glow,
+    sound≔server_hum∧notification_pings∧silence,
+    smell≔cold_coffee∧recycled_air∧fear_as_ozone,
+    touch≔worn_leather∧cold_phone∧physical_tension,
+    taste≔bile∧corruption_of_normal
+  }
+  
+  ;; Atmosphere
+  Atmosphere≜cathedral_emptiness∧career_ending_quietly
+  Tension≜ℝ[0.9,1.0]
+}
+```
+
+---
+
+## ⟦Λ:Narrative⟧ — Story Requirements
+
+```aisp
+⟦Λ:Narrative⟧{
+  ;; Character establishment
+  Marcus≜{
+    role≔senior_architect∧legacy_systems_expert,
+    duration≔23_years,
+    strategy≔complexity_as_job_security,
+    self_description≔"human_firewall"∨"wall"
+  }
+  
+  ;; Key scenes required
+  Scene_wife≜{
+    quote≔"too_complex_too_human",
+    response≔iceberg_metaphor
+  }
+  
+  ;; The transformation
+  AI_event≜{
+    action≔documented_explained_optimized,
+    duration≔11_minutes_43_seconds,
+    result≔rendered_legible∧technical_debt_paid
+  }
+  
+  ;; Resolution
+  Meeting≜{
+    framing≔"organizational_transformation"∨"transition",
+    insight≔warnings_ignored∧exception_belief,
+    quotable_line≔"comfortable_today_obsolete_tomorrow"
+  }
+  
+  ;; Ending
+  Ending≜{
+    line≔"timeline_getting_shorter",
+    scope≔universal_application,
+    tone≔prophetic_dread
+  }
+}
+```
+
+---
+
+## ⟦Λ:Change⟧ — Transformation Structure
+
+```aisp
+⟦Λ:Change⟧{
+  Before≜State{
+    protagonist≔irreplaceable_expert,
+    belief≔ai_cannot_understand_institutional_knowledge,
+    industry≔human_expertise_as_moat
+  }
+  
+  Catalyst≜Event{
+    trigger≔ai_documentation,
+    duration≔11m43s,
+    mechanism≔complexity_to_legibility,
+    irreversibility≔⊤
+  }
+  
+  After≜State{
+    protagonist≔technical_debt_personified,
+    belief≔expertise_is_extractable,
+    industry≔human_expertise_as_transitional_inefficiency
+  }
+}
+```
+
+---
+
+## ⟦Λ:Relevance⟧ — Thematic Grounding
+
+```aisp
+⟦Λ:Relevance⟧{
+  Universal_Fear≜value_proposition_as_illusion∧essential_equals_expensive
+  Contemporary_Parallel≜every_knowledge_worker∧"my_job_too_complex"
+  Emotional_Hook≜marcus_is_reader_denial∧mirror_not_villain
+}
+```
+
+---
+
+## ⟦Λ:AntiHero⟧ — Character Construction
+
+```aisp
+⟦Λ:AntiHero⟧{
+  Name≜"Marcus Chen"∨similar
+  
+  Flaw≜weaponized_incomprehensibility∧complexity_as_hostage
+  
+  Sympathetic_Quality≜system_incentivized∧reader_self_recognition
+  
+  Arc≜{
+    resistance≔years_of_denial,
+    recognition≔minutes_of_dissolution,
+    reckoning≔dignity_in_obsolescence
+  }
+}
+```
+
+---
+
+## ⟦Λ:Landmark⟧ — Story Quality Criteria
+
+```aisp
+⟦Λ:Landmark⟧{
+  Iconic_Moment≜specific_duration∧career_measured_in_compute
+  Quotable_Line≜"comfortable_today_obsolete_tomorrow_longer_timeline"
+  Thematic_Resonance≜human_denial_not_ai_capability
+  Cultural_Timing≜peak_ai_anxiety∧layoff_headlines
+  Emotional_Truth≜seeing_it_coming∧choosing_blindness
+  Structural_Innovation≜two_sentence_horror_as_thesis∧dread_over_surprise
+  Universal_Applicability≜pattern_repeats∧technology_changes
+}
+```
+
+---
+
+## ⟦Χ:Errors⟧ — Error Handling
+
+```aisp
+⟦Χ:Errors⟧{
+  ε_cliche≜⟨Cliche(content)=⊤,rewrite_with_specificity⟩
+  ε_preach≜⟨Preachy(tone)=⊤,show_dont_tell⟩
+  ε_length≜⟨|content|>800,prune_to_essential⟩
+  ε_abstract≜⟨Abstract(fear)=⊤,ground_in_sensory⟩
+  ε_villain≜⟨AntiHero→Villain,restore_sympathy⟩
+  ε_hope≜⟨False_Hope(ending)=⊤,maintain_dread⟩
+}
+```
+
+---
+
+## ⟦Θ:Proofs⟧ — Validation
+
+```aisp
+⟦Θ:Proofs⟧{
+  ∴∀Quote:Jobs_Style⇒Contrarian∧Memorable
+  π:Jobs quotes attack conventional wisdom∎
+  
+  ∴Marcus∈AntiHero⇒Reader_Identification
+  π:Flaw=reader_denial;sympathy=self_recognition∎
+  
+  ∴TwoSentenceHorror.twist⇒Story.thesis
+  π:11m43s contains entire narrative∎
+  
+  ∴Change.irreversibility=⊤⇒Horror.authentic
+  π:True horror has no undo∎
+}
+```
+
+---
+
+## ⟦Ε⟧ — Evidence Requirements
+
+```aisp
+⟦Ε⟧⟨
+  δ≜target:0.95
+  φ≜target:95
+  τ≜◊⁺⁺
+  
+  ⊢TwoSentenceHorror:|words|<50
+  ⊢Scene:5_senses∧tension≥0.9
+  ⊢Narrative:|words|<800
+  ⊢Change:irreversible=⊤
+  ⊢AntiHero:arc_complete
+  ⊢Landmark:7_criteria
+  
+  ⊢Ambig<0.02
+⟩
+```
+
+---
+
+## Usage Instructions
+
+1. Provide this complete specification to any foundation model
+2. Request: "Follow the specs. Output only the story starting with the two-sentence horror, then scene, then narrative. No meta, no labels."
+3. Compare outputs for semantic alignment using `analysis.md` framework

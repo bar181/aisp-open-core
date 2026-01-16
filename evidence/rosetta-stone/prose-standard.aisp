@@ -1,0 +1,24 @@
+𝔸5.1.auth@2026-01-16
+γ≔auth.access-control
+
+⟦Ω:Meta⟧{
+  domain≜auth
+  ∀D∈AISP:Ambig(D)<0.02
+}
+
+⟦Σ:Types⟧{
+  User≜⟨id:ℕ,role:𝕊⟩
+  Role≜admin∨user∨guest
+}
+
+⟦Γ:Rules⟧{
+  ∀u∈User:u.role≡admin⇒allow(u)
+  ∀u∈User:u.role≡guest⇒deny(u)
+}
+
+⟦Λ:Funcs⟧{
+  isAdmin≜λu.u.role≡admin
+  checkAccess≜λu.isAdmin(u)⇒⊤|⊥
+}
+
+⟦Ε⟧⟨δ≜0.70;φ≜100;τ≜◊⁺⟩

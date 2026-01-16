@@ -1,0 +1,41 @@
+[package]
+name = "aisp"
+version = "0.1.0"
+edition = "2021"
+authors = ["Bradley Ross (https://github.com/bar181)"]
+description = "AISP 5.1 document validation library - AI Symbolic Protocol with <2% ambiguity"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/bar181/aisp-open-core"
+homepage = "https://github.com/bar181/aisp-open-core"
+documentation = "https://docs.rs/aisp"
+readme = "README.md"
+keywords = ["aisp", "ai", "validation", "specification", "type-theory"]
+categories = ["development-tools", "parser-implementations"]
+
+[lib]
+name = "aisp"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["std"]
+std = []
+wasm = []
+streaming = ["std"]  # Streaming requires std for now
+serde = ["dep:serde"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"], optional = true }
+
+[dev-dependencies]
+# criterion = "0.5"  # Enable for benchmarks
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.release-wasm]
+inherits = "release"
+opt-level = "z"
+strip = true
+panic = "abort"

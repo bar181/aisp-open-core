@@ -1,0 +1,50 @@
+{
+  "name": "aisp-validator",
+  "version": "0.3.0",
+  "description": "AISP 5.1 document validator - validates AI Symbolic Protocol specifications with <2% ambiguity",
+  "main": "src/index.js",
+  "bin": {
+    "aisp-validator": "bin/cli.js"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./src/index.cjs"
+    },
+    "./browser": "./browser/loader.js"
+  },
+  "files": [
+    "src/",
+    "browser/",
+    "bin/",
+    "wasm/aisp.wasm",
+    "wasm/aisp.h"
+  ],
+  "scripts": {
+    "test": "node --test test/",
+    "build:wasm": "cd wasm && ./build.sh"
+  },
+  "keywords": [
+    "aisp",
+    "validator",
+    "ai",
+    "specification",
+    "wasm",
+    "formal-methods",
+    "type-theory"
+  ],
+  "author": "Bradley Ross",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bar181/aisp-open-core"
+  },
+  "homepage": "https://github.com/bar181/aisp-open-core#readme",
+  "bugs": {
+    "url": "https://github.com/bar181/aisp-open-core/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

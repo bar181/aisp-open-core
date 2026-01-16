@@ -1,0 +1,22 @@
+𝔸5.1.tic-tac-toe@2026-01-15
+γ≔game-minimal
+
+⟦Ω:Meta⟧{
+  ∀D∈AISP:Ambig(D)<0.02
+}
+
+⟦Σ:Types⟧{
+  Player≜{X,O}
+  Cell≜{Empty,X,O}
+  Board≜Cell[9]
+}
+
+⟦Γ:Rules⟧{
+  ∀move:ValidMove(b,p)⇔b[p]=Empty
+}
+
+⟦Λ:Funcs⟧{
+  makeMove≜λ(b,p,pl).b[p]←pl
+}
+
+⟦Ε⟧⟨δ≜0.40;τ≜◊⟩

@@ -1,0 +1,30 @@
+𝔸5.1.standard@2026-01-16
+γ≔math.operations
+ρ≔⟨arithmetic,validation⟩
+
+⟦Ω:Meta⟧{
+  domain≜math
+  version≜1.0
+  ∀D∈AISP:Ambig(D)<0.02
+}
+
+⟦Σ:Types⟧{
+  ℕ≜natural_numbers
+  ℤ≜integers
+  Fn⟨A,B⟩≜A→B
+}
+
+⟦Γ:Rules⟧{
+  ∀x∈ℕ:x≥0
+  ∀a,b∈ℤ:a+b∈ℤ
+  ∀f∈Fn:∃x:f(x)
+}
+
+⟦Λ:Funcs⟧{
+  id≜λx.x
+  sum≜λa.λb.a+b
+  double≜λx.x+x
+  compose≜λf.λg.λx.f(g(x))
+}
+
+⟦Ε⟧⟨δ≜0.65;φ≜100;τ≜◊⁺⟩

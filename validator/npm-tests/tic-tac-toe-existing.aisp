@@ -1,0 +1,28 @@
+𝔸1.0.tic-tac-toe@2026-01-15
+γ≔game-spec
+
+⟦Ω:Meta⟧{
+  ∀D∈AISP:Ambig(D)<0.02
+  Target≜AI-Agents
+}
+
+⟦Σ:Types⟧{
+  Player≜{X,O}
+  Cell≜{Empty,X,O}
+  Board≜Cell[9]
+  GameState≜{Playing,Won(Player),Draw}
+}
+
+⟦Γ:Rules⟧{
+  ∀move:ValidMove(board,pos)⇔board[pos]=Empty
+  ∀win:WinCondition⇔∃line∈Lines:∀c∈line:c=player
+  Lines≜{rows,cols,diags}
+}
+
+⟦Λ:Funcs⟧{
+  makeMove≜λ(board,pos,player).board[pos]←player
+  checkWin≜λboard.∃p∈Player:WinCondition(board,p)
+  nextPlayer≜λp.if p=X then O else X
+}
+
+⟦Ε⟧⟨δ≜0.75;φ≜100;τ≜◊⁺⁺⟩

@@ -1,0 +1,222 @@
+𝔸5.1.rosetta-stone@2026-01-16
+γ≔evidence.rosetta-stone
+ρ≔⟨prose,code,aisp,examples⟩
+
+;; ─── Ω: META ───
+⟦Ω:Meta⟧{
+  domain≜rosetta-stone
+  version≜5.1
+  purpose≜"Demonstrate Prose↔Code↔AISP translations"
+  ∀D∈AISP:Ambig(D)<0.02
+}
+
+;; ─── Σ: ROSETTA MAPPINGS ───
+⟦Σ:Rosetta⟧{
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; SIMPLE MAPPINGS: Prose → AISP
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Example 1: Definition
+  ;; Prose: "x is defined as 5"
+  ;; AISP:
+  x≜5
+
+  ;; Example 2: Universal quantification
+  ;; Prose: "for all x in S, P holds"
+  ;; AISP:
+  ∀x∈S:P(x)
+
+  ;; Example 3: Existential quantification
+  ;; Prose: "there exists a unique x such that f(x) equals zero"
+  ;; AISP:
+  ∃!x:f(x)≡0
+
+  ;; Example 4: Implication
+  ;; Prose: "A implies B"
+  ;; AISP:
+  A⇒B
+
+  ;; Example 5: Function mapping
+  ;; Prose: "f maps input i to output o"
+  ;; AISP:
+  f:I→O
+  f≜λi.o
+
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; CODE MAPPINGS: Code → AISP
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Example 6: Constant definition
+  ;; Code: const x = 5
+  ;; AISP:
+  x≜5
+
+  ;; Example 7: Array every check
+  ;; Code: S.every(x => P(x))
+  ;; AISP:
+  ∀x∈S:P(x)
+
+  ;; Example 8: Conditional
+  ;; Code: if(A){ B }
+  ;; AISP:
+  A⇒B
+
+  ;; Example 9: Arrow function
+  ;; Code: (x) => y
+  ;; AISP:
+  λx.y
+}
+
+;; ─── Γ: MEDIUM COMPLEXITY EXAMPLES ───
+⟦Γ:Rules⟧{
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; MEDIUM: Nucleus immutability
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "If the nucleus changes, the header ID changes
+  ;;         because ID equals SHA256 of nucleus"
+  ;; AISP:
+  ∀p:∂𝒩(p)⇒∂ℋ.id(p)
+  ∀p:ℋ.id(p)≡SHA256(𝒩(p))
+
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; MEDIUM: Hebbian learning
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "Success adds 1 to affinity, failure subtracts 10,
+  ;;         below threshold causes skip"
+  ;; AISP:
+  ⊕(A,B)⇒ℳ.aff[A,B]+=1
+  ⊖(A,B)⇒ℳ.aff[A,B]-=10
+  ℳ.aff[A,B]<τ_v⇒skip(B)
+
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; MEDIUM: Type constraints
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "All constants are immutable"
+  ;; AISP:
+  ∀c∈Const:c.immutable≡⊤
+
+  ;; Prose: "If x is valid then accept x"
+  ;; AISP:
+  ∀x:T:valid(x)⇒accept(x)
+}
+
+;; ─── Λ: COMPLEX EXAMPLES ───
+⟦Λ:Funcs⟧{
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; COMPLEX: Beam search algorithm
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "Initialize K beams via determinantal point process,
+  ;;         expand by ghost scan, filter by risk threshold,
+  ;;         keep top K, repeat until done"
+  ;; AISP:
+  Run≜λψ_*.let B₀=‖*init(⊞(ψ_*))in argmax_{b∈search(B₀,0)}μ_f(b)
+
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; COMPLEX: Validation pipeline
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "Tokenize input, compute density, check grammar,
+  ;;         assign tier based on density threshold"
+  ;; AISP:
+  validate≜⌈⌉∘δ∘Γ?∘∂
+  ⌈⌉≜λd.[≥¾↦◊⁺⁺,≥⅗↦◊⁺,≥⅖↦◊,≥⅕↦◊⁻,_↦⊘](d)
+
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; COMPLEX: Recursive optimization
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "Recursively optimize document density by applying
+  ;;         recovery transformations until no improvement"
+  ;; AISP:
+  opt_δ≜fix λself d n.n≤0→d|let d'=argmax{ρᵢ(d)}(δ)in δ(d')>δ(d)→self d'(n-1)|d
+
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; COMPLEX: Identity function
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "Define the identity function that returns its input"
+  ;; AISP:
+  id≜λx.x
+
+  ;; ═══════════════════════════════════════════════════════════════
+  ;; COMPLEX: Sum function
+  ;; ═══════════════════════════════════════════════════════════════
+
+  ;; Prose: "Define a sum function that adds two numbers"
+  ;; AISP:
+  sum≜λa.λb.a+b
+}
+
+;; ─── Σ: COMPOUND SYMBOLS ───
+⟦Σ:Compounds⟧{
+  ;; Compounds (≤5 atoms, head∈{Ω,Γ,Δ,Ψ,Φ})
+  ;; Prose: "pocket architecture"
+  Γ𝒫ℋℳ𝒩↦pocket
+
+  ;; Prose: "signal decomposition"
+  ΓSignal↦V_H⊕V_L⊕V_S
+
+  ;; Prose: "ghost intent"
+  Ψψ_g↦ψ_*⊖ψ_have
+
+  ;; Prose: "zero-cost binding"
+  Δ⊗λ⊤↦zero-cost
+
+  ;; Prose: "crash binding"
+  Δ⊗λ⊥↦crash
+
+  ;; Prose: "beam search"
+  ΩRun↦beam_search
+}
+
+;; ─── Σ: QUICK REFERENCE ───
+⟦Σ:QuickRef⟧{
+  Core≜{
+    ≜:def,
+    ≔:assign,
+    ≡:identical,
+    ⇒:implies,
+    ↔:iff,
+    ∀:all,
+    ∃:exists,
+    ∃!:unique,
+    ∈:elem,
+    ⊆:subset,
+    ∧:and,
+    ∨:or,
+    ¬:not,
+    ⊤:true,
+    ⊥:false,
+    λ:lambda,
+    ∘:compose,
+    →:func,
+    ↦:mapsto,
+    ⟨⟩:tuple,
+    ⟦⟧:block,
+    𝒫:pocket,
+    ∅:empty
+  }
+
+  Tiers≜{
+    ◊⁺⁺:δ≥0.75,
+    ◊⁺:δ≥0.60,
+    ◊:δ≥0.40,
+    ◊⁻:δ≥0.20,
+    ⊘:δ<0.20
+  }
+}
+
+;; ─── Ε: EVIDENCE ───
+⟦Ε⟧⟨
+δ≜0.78
+φ≜100
+τ≜◊⁺⁺
+⊢Rosetta:Prose↔Code↔AISP
+⊢Examples:Simple[9],Medium[4],Complex[4]
+⊢Ambig<0.02
+∎
+⟩

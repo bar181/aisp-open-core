@@ -1,0 +1,96 @@
+𝔸5.1.auth@2026-01-16
+γ≔auth.access-control.complete
+ρ≔⟨auth,rbac,validation,proofs⟩
+⊢ND∧RBAC
+
+⟦Ω:Meta⟧{
+  domain≜auth.rbac
+  version≜1.0.0
+  author≜"AISP Rosetta"
+  ∀D∈AISP:Ambig(D)<0.02
+  ∀response:δ≥0.40
+}
+
+⟦Σ:Types⟧{
+  ;; Base types
+  Id≜ℕ
+  Name≜𝕊
+
+  ;; User domain
+  User≜⟨id:Id,name:Name,role:Role,active:𝔹⟩
+  Role≜Σ(admin∨moderator∨user∨guest)
+
+  ;; Permission domain
+  Permission≜⟨resource:𝕊,action:Action,granted:𝔹⟩
+  Action≜read∨write∨delete∨admin
+
+  ;; Access result
+  AccessResult≜⊤∨⊥∨⟨error:𝕊⟩
+}
+
+⟦Γ:Rules⟧{
+  ;; Role hierarchy
+  admin≻moderator≻user≻guest
+
+  ;; Access rules
+  ∀u∈User:u.role≡admin⇒∀a∈Action:allow(u,a)
+  ∀u∈User:u.role≡moderator⇒allow(u,read)∧allow(u,write)
+  ∀u∈User:u.role≡user⇒allow(u,read)
+  ∀u∈User:u.role≡guest⇒allow(u,read)∧¬allow(u,write)
+
+  ;; Active constraint
+  ∀u∈User:¬u.active⇒deny(u)
+
+  ;; Transitivity
+  ∀r₁,r₂∈Role:r₁≻r₂∧allow(r₂,a)⇒allow(r₁,a)
+}
+
+⟦Λ:Funcs⟧{
+  ;; Role checks
+  isAdmin≜λu.u.role≡admin
+  isModerator≜λu.u.role≡moderator∨isAdmin(u)
+
+  ;; Permission checks
+  canRead≜λu.u.active∧u.role∈{admin,moderator,user,guest}
+  canWrite≜λu.u.active∧u.role∈{admin,moderator}
+  canDelete≜λu.u.active∧isAdmin(u)
+
+  ;; Main access function
+  checkAccess≜λu.λa.case a of
+    read→canRead(u)
+    write→canWrite(u)
+    delete→canDelete(u)
+    admin→isAdmin(u)
+
+  ;; Higher-order: role promotion
+  promote≜λu.λr.u{role:=r}
+}
+
+⟦Χ:Errors⟧{
+  ε_inactive≜⟨¬u.active,⟨error:"User inactive"⟩⟩
+  ε_permission≜⟨¬allow(u,a),⟨error:"Permission denied"⟩⟩
+  ε_role≜⟨u.role≡guest∧a≡write,⟨error:"Guests cannot write"⟩⟩
+}
+
+⟦Θ:Proofs⟧{
+  ∴∀u:isAdmin(u)⇒canWrite(u)
+  π:admin∈{admin,moderator}∎
+
+  ∴∀u,a:deny(u)⇒¬checkAccess(u,a)
+  π:¬u.active blocks all paths∎
+
+  ∴∀r₁≻r₂:perm(r₂)⊆perm(r₁)
+  π:by transitivity rule∎
+}
+
+⟦Ε⟧⟨
+δ≜0.82
+φ≜100
+τ≜◊⁺⁺
+⊢RBAC:hierarchy,transitivity
+⊢Types:User,Role,Permission,Action
+⊢Funcs:isAdmin,canRead,canWrite,checkAccess
+⊢Proofs:3∎
+⊢Ambig<0.02
+∎
+⟩
