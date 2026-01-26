@@ -1,0 +1,21 @@
+𝔸5.1.SimpleTest@2026-01-25
+
+⟦Ω:Meta⟧{
+  domain≜test
+  version≜1.0.0
+}
+
+⟦Σ:Types⟧{
+  State≜{A,B,C}
+  Value≜ℕ
+}
+
+⟦Γ:Rules⟧{
+  ValidState
+}
+
+⟦Λ:Funcs⟧{
+  next≜λx.Next(x)
+}
+
+⟦Ε⟧⟨δ≜0.8⟩

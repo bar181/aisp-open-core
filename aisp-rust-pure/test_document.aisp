@@ -1,0 +1,33 @@
+𝔸5.1.GameLogic@2026-01-25
+
+γ≔⟨game,turn-based⟩
+ρ≔⟨protocol,state-transition⟩
+
+⟦Ω:Meta⟧{
+  domain≜game_logic
+  version≜1.0.0
+  description≜"Turn-based game state management"
+  ∀D∈AISP:Ambig(D)<0.02
+}
+
+⟦Σ:Types⟧{
+  GameState≜{Start,Playing,GameOver}
+  Player≜{PlayerA,PlayerB}
+  Move≜ℕ
+  Score≜ℕ
+}
+
+⟦Γ:Rules⟧{
+  ∀s:GameState→Valid(s)
+  ∀p:Player→HasTurn(p)⇒CanMove(p)
+  ∀m:Move→ValidMove(m)⇒UpdateState(m)
+  □(Playing→◊GameOver)
+}
+
+⟦Λ:Funcs⟧{
+  nextState≜λ(s,m).TransitionTo(s,m)
+  isValidMove≜λm.ValidMove(m)
+  calculateScore≜λ(p,moves).Σ(moves)
+}
+
+⟦Ε⟧⟨δ≜0.85;φ≜100;τ≜◊⁺⟩

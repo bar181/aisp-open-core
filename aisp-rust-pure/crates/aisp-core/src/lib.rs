@@ -12,6 +12,7 @@ pub mod validator;
 pub mod z3_integration;
 pub mod error;
 pub mod symbols;
+pub mod conflict_types;
 
 // New modular parser components
 pub mod lexer;
@@ -42,6 +43,27 @@ pub mod temporal_pattern_detector;
 pub mod temporal_logic_solver;
 pub mod temporal_model_checker;
 pub mod temporal_new;
+
+// Advanced formal verification components
+pub mod property_types;
+pub mod formula_converter;
+pub mod property_factory;
+pub mod property_extractor_main;
+pub mod property_extractor;
+pub mod smt_types;
+pub mod smt_formula_converter;
+pub mod smt_generator_main;
+pub mod smt_generator;
+pub mod proof_types;
+pub mod axiom_system;
+pub mod proof_search;
+pub mod theorem_prover_main;
+pub mod theorem_prover;
+pub mod model_checker;
+
+// Test fixtures and utilities
+#[cfg(test)]
+pub mod test_fixtures;
 
 pub use ast::*;
 pub use parser::*;
