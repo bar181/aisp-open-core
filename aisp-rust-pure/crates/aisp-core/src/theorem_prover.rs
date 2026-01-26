@@ -74,6 +74,44 @@ impl TheoremProver {
         prover
     }
 
+    /// Prove a formula using the configured proof search strategy
+    pub fn prove_formula(&mut self, formula: &PropertyFormula) -> AispResult<ProofTree> {
+        let goal = &formula.structure;
+        
+        // Execute proof search
+        let outcome = match self.strategy {
+            ProofSearchStrategy::NaturalDeduction => {
+                self.search_engine.natural_deduction_search(goal)?
+            }
+            ProofSearchStrategy::BackwardChaining => {
+                self.search_engine.backward_chaining_search(goal)?
+            }
+            ProofSearchStrategy::ForwardChaining => {
+                self.search_engine.forward_chaining_search(goal)?
+            }
+            ProofSearchStrategy::Resolution => {
+                self.search_engine.resolution_search(goal)?
+            }
+            _ => return Err(AispError::validation_error("Proof strategy not implemented".to_string())),
+        };
+        
+        // Convert proof outcome to ProofTree
+        match outcome {
+            ProofOutcome::Proven => {
+                // Create a placeholder proof tree for successful proofs
+                Ok(ProofTree {
+                    root: goal.clone(),
+                    children: vec![],
+                    rule: Some("Proved".to_string()),
+                    annotations: std::collections::HashMap::new(),
+                })
+            }
+            ProofOutcome::Error(reason) => Err(AispError::validation_error(reason)),
+            ProofOutcome::Timeout => Err(AispError::validation_error("Proof search timeout".to_string())),
+            _ => Err(AispError::validation_error("Proof not found".to_string())),
+        }
+    }
+
     /// Prove a property using the configured proof search strategy
     pub fn prove_property(&mut self, property: &ExtractedProperty) -> AispResult<ProofResult> {
         let start_time = Instant::now();
