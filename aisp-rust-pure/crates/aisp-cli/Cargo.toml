@@ -12,6 +12,10 @@ description = "Command-line interface for AISP validation and analysis"
 default = []
 z3-verification = ["aisp-core/z3-verification"]
 
+[[bin]]
+name = "run_verification"
+path = "src/bin/run_verification.rs"
+
 [dependencies]
 aisp-core = { path = "../aisp-core" }
 clap = { version = "4.0", features = ["derive", "color"] }
