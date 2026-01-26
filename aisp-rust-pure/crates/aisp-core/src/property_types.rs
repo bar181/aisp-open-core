@@ -198,6 +198,18 @@ pub struct PropertyComplexity {
     pub difficulty_score: u8,
 }
 
+impl Default for PropertyComplexity {
+    fn default() -> Self {
+        Self {
+            quantifier_depth: 0,
+            logical_connectives: 0,
+            function_applications: 0,
+            variable_count: 0,
+            difficulty_score: 1,
+        }
+    }
+}
+
 /// Property extraction statistics
 #[derive(Debug, Clone)]
 pub struct PropertyExtractionStats {
@@ -318,14 +330,21 @@ mod tests {
                 free_variables: HashSet::new(),
                 predicates: HashSet::new(),
                 functions: HashSet::new(),
+                constants: HashSet::new(),
             },
             property_type: PropertyType::TypeSafety,
+            context: PropertyContext {
+                type_definitions: HashMap::new(),
+                function_definitions: HashMap::new(),
+                constants: HashMap::new(),
+                dependencies: vec![],
+            },
             complexity: PropertyComplexity::default(),
             source_location: SourceLocation {
-                file_path: None,
                 block_type: "test".to_string(),
                 line: Some(1),
                 column: Some(1),
+                source_text: Some("test property".to_string()),
             },
         };
         

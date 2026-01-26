@@ -82,7 +82,7 @@ pub struct MathematicalStructure<Domain: Clone + Hash + Eq> {
 }
 
 /// Semantic Value in our domain-theoretic framework
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SemanticValue {
     /// Bottom element (⊥) - undefined/error
     Bottom,

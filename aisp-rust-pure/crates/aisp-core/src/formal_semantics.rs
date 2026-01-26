@@ -525,6 +525,25 @@ impl AispSemantics {
 mod tests {
     use super::*;
     use crate::ast::*;
+    use std::collections::HashMap;
+
+    // Inline test utility - replaced test_fixtures
+    fn create_minimal_valid_document() -> AispDocument {
+        AispDocument {
+            header: DocumentHeader {
+                version: "5.1".to_string(),
+                name: "test".to_string(),
+                date: "2026-01-26".to_string(),
+                metadata: None,
+            },
+            metadata: DocumentMetadata {
+                domain: None,
+                protocol: None,
+            },
+            blocks: vec![],
+            span: Span::new(1, 1, 1, 10),
+        }
+    }
 
     #[test]
     fn test_semantic_interpretation() {
