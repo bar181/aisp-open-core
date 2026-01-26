@@ -58,10 +58,16 @@ mod validate;
 #[cfg(feature = "streaming")]
 pub mod streaming;
 
+#[cfg(feature = "z3")]
+pub mod z3_validation;
+
 // Re-exports
 pub use symbol::{Category, Symbol, SymbolId, AISP_SYMBOLS, is_aisp_char, count_symbols, count_tokens, lookup_symbol, starts_with_symbol, get_glyph};
 pub use tier::Tier;
 pub use validate::{validate, is_valid, get_tier, get_density, ValidationResult, DensityMetrics};
+
+#[cfg(feature = "z3")]
+pub use z3_validation::{validate_with_z3, AispConstruct, Z3Context};
 
 /// Required blocks for a valid AISP document
 pub const REQUIRED_BLOCKS: [&str; 5] = ["⟦Ω", "⟦Σ", "⟦Γ", "⟦Λ", "⟦Ε"];

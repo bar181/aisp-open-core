@@ -22,6 +22,7 @@ std = []
 wasm = []
 streaming = ["std"]  # Streaming requires std for now
 serde = ["dep:serde"]
+z3 = ["std"]  # Z3 validation requires std
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"], optional = true }
