@@ -50,7 +50,7 @@ pub enum PropertyType {
 }
 
 /// Mathematical formula representation
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PropertyFormula {
     /// Logical structure of the formula
     pub structure: FormulaStructure,
