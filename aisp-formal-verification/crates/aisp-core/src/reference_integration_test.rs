@@ -19,7 +19,7 @@ pub struct ReferenceChallengeTestSuite {
 impl ReferenceChallengeTestSuite {
     pub fn new() -> Self {
         Self {
-            validator: ReferenceValidator::new(),
+            validator: ReferenceValidator::new().expect("Failed to create reference validator"),
             semantic_analyzer: SemanticAnalyzer::new(),
         }
     }
@@ -37,9 +37,8 @@ impl ReferenceChallengeTestSuite {
         let semantic_result = self.semantic_analyzer.analyze(&document, test_document)?;
         
         // Run comprehensive reference validation
-        let validation_result = self.validator.validate_reference_compliance(
+        let validation_result = self.validator.validate_document(
             &document,
-            test_document,
             &semantic_result.to_result(),
         )?;
 
@@ -47,14 +46,12 @@ impl ReferenceChallengeTestSuite {
         println!("\n📊 REFERENCE.MD COMPLIANCE RESULTS");
         println!("==================================");
         println!("Overall Score: {:.1}%", validation_result.compliance_score * 100.0);
-        println!("Compliance Level: {:?}", validation_result.compliance_level);
-        println!("Verification Time: {}ms", validation_result.verification_time_ms);
+        println!("Compliance Level: {:?}", validation_result.overall_compliance);
+        println!("Verification Status: Complete");
 
         println!("\n🧮 MATHEMATICAL FOUNDATIONS");
-        println!("Ambiguity Verified: {}", validation_result.math_foundations.ambiguity_verified);
-        println!("Calculated Ambiguity: {:.4}", validation_result.math_foundations.calculated_ambiguity);
-        println!("Pipeline Proofs: {}", validation_result.math_foundations.pipeline_proofs.len());
-        println!("Token Efficiency: {}", validation_result.math_foundations.token_efficiency.meets_spec);
+        println!("Ambiguity Verified: {}", validation_result.mathematical_foundations.ambiguity_verified);
+        println!("Token Efficiency: {}", validation_result.mathematical_foundations.token_efficiency.meets_spec);
 
         println!("\n🔺 TRI-VECTOR ORTHOGONALITY");
         println!("V_H ∩ V_S ≡ ∅: {}", validation_result.trivector_orthogonality.vh_vs_orthogonal);
@@ -99,22 +96,18 @@ impl ReferenceChallengeTestSuite {
 
         // Challenge assessment
         println!("\n🎯 CHALLENGE ASSESSMENT");
-        match validation_result.compliance_level {
-            ComplianceLevel::Perfect => {
-                println!("🏆 PERFECT COMPLIANCE: Reference.md specification FULLY VERIFIED!");
+        match validation_result.overall_compliance {
+            ComplianceLevel::FullCompliance => {
+                println!("🏆 FULL COMPLIANCE: Reference.md specification FULLY VERIFIED!");
                 println!("   All mathematical foundations, orthogonality proofs, and features validated.");
             },
-            ComplianceLevel::High => {
-                println!("🥇 HIGH COMPLIANCE: Excellent reference.md verification coverage.");
+            ComplianceLevel::PartialCompliance => {
+                println!("🥇 PARTIAL COMPLIANCE: Good reference.md verification coverage.");
                 println!("   Minor gaps remain in specification implementation.");
             },
-            ComplianceLevel::Partial => {
-                println!("🥈 PARTIAL COMPLIANCE: Good foundation with room for improvement.");
+            ComplianceLevel::MinimalCompliance => {
+                println!("🥈 MINIMAL COMPLIANCE: Basic foundation with room for improvement.");
                 println!("   Several specification requirements need implementation.");
-            },
-            ComplianceLevel::Low => {
-                println!("🥉 LOW COMPLIANCE: Basic verification capabilities present.");
-                println!("   Significant work needed to meet reference.md requirements.");
             },
             ComplianceLevel::Failed => {
                 println!("❌ FAILED COMPLIANCE: Major gaps in reference.md verification.");
@@ -122,10 +115,11 @@ impl ReferenceChallengeTestSuite {
             }
         }
 
-        // Issues summary
-        if !validation_result.verification_issues.is_empty() {
+        // Issues summary (using feature compliance failures as proxy for issues)
+        let issues: Vec<String> = validation_result.feature_compliance.feature_summary.critical_failures.clone();
+        if !issues.is_empty() {
             println!("\n⚠️ VERIFICATION ISSUES");
-            for (i, issue) in validation_result.verification_issues.iter().enumerate() {
+            for (i, issue) in issues.iter().enumerate() {
                 println!("{}. {}", i + 1, issue);
             }
         }
@@ -154,9 +148,8 @@ impl ReferenceChallengeTestSuite {
         let mut parser = AispParser::new(test_document.to_string());
         let document = parser.parse()?;
         let semantic_result = self.semantic_analyzer.analyze(&document, test_document)?;
-        let validation_result = self.validator.validate_reference_compliance(
+        let validation_result = self.validator.validate_document(
             &document,
-            test_document,
             &semantic_result.to_result(),
         )?;
 
@@ -209,22 +202,18 @@ impl ReferenceChallengeTestSuite {
         }
 
         report.push_str("\n## Challenge Assessment\n\n");
-        match validation_result.compliance_level {
-            ComplianceLevel::Perfect => {
-                report.push_str("🏆 **PERFECT COMPLIANCE**: Reference.md specification FULLY VERIFIED!  \n");
+        match validation_result.overall_compliance {
+            ComplianceLevel::FullCompliance => {
+                report.push_str("🏆 **FULL COMPLIANCE**: Reference.md specification FULLY VERIFIED!  \n");
                 report.push_str("All mathematical foundations, orthogonality proofs, and features validated.  \n\n");
             },
-            ComplianceLevel::High => {
-                report.push_str("🥇 **HIGH COMPLIANCE**: Excellent reference.md verification coverage.  \n");
+            ComplianceLevel::PartialCompliance => {
+                report.push_str("🥇 **PARTIAL COMPLIANCE**: Good reference.md verification coverage.  \n");
                 report.push_str("Minor gaps remain in specification implementation.  \n\n");
             },
-            ComplianceLevel::Partial => {
-                report.push_str("🥈 **PARTIAL COMPLIANCE**: Good foundation with room for improvement.  \n");
+            ComplianceLevel::MinimalCompliance => {
+                report.push_str("🥈 **MINIMAL COMPLIANCE**: Basic foundation with room for improvement.  \n");
                 report.push_str("Several specification requirements need implementation.  \n\n");
-            },
-            ComplianceLevel::Low => {
-                report.push_str("🥉 **LOW COMPLIANCE**: Basic verification capabilities present.  \n");
-                report.push_str("Significant work needed to meet reference.md requirements.  \n\n");
             },
             ComplianceLevel::Failed => {
                 report.push_str("❌ **FAILED COMPLIANCE**: Major gaps in reference.md verification.  \n");
@@ -232,9 +221,10 @@ impl ReferenceChallengeTestSuite {
             }
         }
 
-        if !validation_result.verification_issues.is_empty() {
+        let issues: Vec<String> = validation_result.feature_compliance.feature_summary.critical_failures.clone();
+        if !issues.is_empty() {
             report.push_str("## Verification Issues\n\n");
-            for (i, issue) in validation_result.verification_issues.iter().enumerate() {
+            for (i, issue) in issues.iter().enumerate() {
                 report.push_str(&format!("{}. {}  \n", i + 1, issue));
             }
         }
