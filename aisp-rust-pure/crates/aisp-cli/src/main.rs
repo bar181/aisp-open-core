@@ -377,16 +377,16 @@ async fn validate_single_file(cli: &Cli, file: &Path) -> Result<CliValidationRes
                 consistency_score: rel_analysis.consistency_score,
                 constraints_total: rel_analysis.constraint_analysis.constraints.len(),
                 constraints_satisfied: rel_analysis.constraint_analysis.satisfied.len(),
-                conflicts: rel_analysis.conflicts.len(),
+                conflicts: rel_analysis.conflict_analysis.conflicts.len(),
             });
         }
 
         if let Some(temp_analysis) = &semantic.temporal_analysis {
             cli_result.temporal_analysis = Some(TemporalSummary {
                 consistency_score: temp_analysis.consistency_score,
-                ltl_formulas: temp_analysis.ltl_analysis.formulas.len(),
-                ctl_formulas: temp_analysis.ctl_analysis.formulas.len(),
-                patterns_detected: temp_analysis.ltl_analysis.patterns.len(),
+                ltl_formulas: temp_analysis.formula_analysis.formulas.len(),
+                ctl_formulas: temp_analysis.formula_analysis.formulas.len(), // Both use same formula set
+                patterns_detected: temp_analysis.pattern_analysis.patterns.len(),
             });
         }
     }
