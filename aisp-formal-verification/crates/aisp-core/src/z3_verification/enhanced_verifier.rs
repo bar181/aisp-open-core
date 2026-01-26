@@ -5,6 +5,7 @@
 
 use super::{environment::AispZ3Environment, properties::PropertyVerifier, types::*};
 use crate::{ast::*, error::*, tri_vector_validation::*};
+use std::collections::HashMap;
 use std::time::Instant;
 
 #[cfg(feature = "z3-verification")]
@@ -61,12 +62,13 @@ impl EnhancedZ3Verifier {
             // Comprehensive verification would go here
             Ok(EnhancedVerificationResult {
                 status: VerificationStatus::AllVerified,
-                properties: vec![],
+                verified_properties: vec![],
+                proofs: HashMap::new(),
+                counterexamples: HashMap::new(),
+                unsat_cores: HashMap::new(),
                 stats: self.stats.clone(),
-                proofs: vec![],
-                counterexamples: vec![],
                 diagnostics: vec![],
-                elapsed_time: _start_time.elapsed(),
+                tri_vector_result: None,
             })
         }
         
@@ -74,16 +76,18 @@ impl EnhancedZ3Verifier {
         {
             Ok(EnhancedVerificationResult {
                 status: VerificationStatus::Disabled,
-                properties: vec![],
+                verified_properties: vec![],
+                proofs: HashMap::new(),
+                counterexamples: HashMap::new(),
+                unsat_cores: HashMap::new(),
                 stats: EnhancedVerificationStats::default(),
-                proofs: vec![],
-                counterexamples: vec![],
                 diagnostics: vec![SolverDiagnostic {
                     level: DiagnosticLevel::Warning,
                     message: "Z3 verification disabled".to_string(),
-                    suggestion: Some("Compile with --features z3-verification".to_string()),
+                    context: "Feature z3-verification not enabled".to_string(),
+                    timestamp: std::time::SystemTime::now(),
                 }],
-                elapsed_time: _start_time.elapsed(),
+                tri_vector_result: None,
             })
         }
     }

@@ -5,7 +5,7 @@
 
 use crate::{ast::*, error::*, tri_vector_validation::*};
 use std::collections::HashMap;
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime};
 
 /// Enhanced verification configuration
 #[derive(Debug, Clone)]
@@ -141,6 +141,10 @@ pub enum PropertyCategory {
     ResourceConstraints,
     /// Protocol compliance
     ProtocolCompliance,
+    /// Structural integrity
+    StructuralIntegrity,
+    /// Mathematical correctness
+    MathematicalCorrectness,
 }
 
 /// Result of property verification
@@ -247,7 +251,7 @@ pub struct SolverDiagnostic {
     /// Context information
     pub context: String,
     /// Timestamp
-    pub timestamp: Instant,
+    pub timestamp: SystemTime,
 }
 
 /// Diagnostic severity levels
