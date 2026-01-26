@@ -1,0 +1,39 @@
+𝔸5.1.TriVectorValidation@2026-01-26
+
+γ≔⟨trivector,test,validation⟩
+ρ≔⟨signal,orthogonality⟩
+
+⟦Ω:Meta⟧{
+  domain≜trivector_validation
+  description≜"Tri-vector signal validation test"
+  ∀D∈AISP:Ambig(D)<0.02
+}
+
+⟦Σ:Types⟧{
+  Signal≜DirectSum
+  V_H≜VectorSpace768  
+  V_L≜VectorSpace512
+  V_S≜VectorSpace256
+  Vector≜RealVector
+  Pocket≜Structure
+}
+
+⟦Γ:Rules⟧{
+  ∀s:Signal→Valid(s)
+  V_H∩V_S≡∅
+  V_L∩V_S≡∅
+  ∀v1∈V_H,v2∈V_S:⟨v1,v2⟩≡0
+  ∀v1∈V_L,v2∈V_S:⟨v1,v2⟩≡0
+  ∀signal:Signal→∃!(v_h,v_l,v_s):[v_h∈V_H∧v_l∈V_L∧v_s∈V_S∧signal≡v_h⊕v_l⊕v_s]
+}
+
+⟦Λ:Funcs⟧{
+  decompose≜λs.project_signal(s)
+  project_H≜λs.get_H_component(s)
+  project_L≜λs.get_L_component(s)
+  project_S≜λs.get_S_component(s)
+  orthogonal≜λx.is_orthogonal(x)
+  verify_orthogonal≜λx.check_orthogonality(x)
+}
+
+⟦Ε⟧⟨δ≜0.85;φ≜178;τ≜◊⁺⁺⟩
