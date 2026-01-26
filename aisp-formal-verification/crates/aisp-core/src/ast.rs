@@ -171,6 +171,14 @@ pub enum BasicType {
     Boolean,
     /// Strings (𝕊)
     String,
+    /// Vector space with specified dimension (VectorSpace768, etc.)
+    VectorSpace(usize),
+    /// Real vector of arbitrary dimension (RealVector)
+    RealVector,
+    /// Direct sum of vector spaces (DirectSum)
+    DirectSum,
+    /// Mathematical structure (Structure, Composite, etc.)
+    MathematicalStructure(String),
 }
 
 /// Rules block containing logical rules
