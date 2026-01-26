@@ -302,13 +302,32 @@ mod tests {
 
     #[test]
     fn test_extracted_property_creation() {
-        use crate::test_fixtures::TestPropertyBuilder;
+        // Inline test utility - replaced test_fixtures
+        use std::collections::HashMap;
         
-        let property = TestPropertyBuilder::new("prop_1")
-            .with_type(PropertyType::TypeSafety)
-            .with_name("test_property")
-            .with_atomic_formula("P")
-            .build();
+        let property = ExtractedProperty {
+            id: "prop_1".to_string(),
+            name: "test_property".to_string(),
+            formula: PropertyFormula {
+                structure: FormulaStructure::Atomic(AtomicFormula {
+                    predicate: "P".to_string(),
+                    terms: vec![],
+                    type_signature: None,
+                }),
+                quantifiers: vec![],
+                free_variables: HashSet::new(),
+                predicates: HashSet::new(),
+                functions: HashSet::new(),
+            },
+            property_type: PropertyType::TypeSafety,
+            complexity: PropertyComplexity::default(),
+            source_location: SourceLocation {
+                file_path: None,
+                block_type: "test".to_string(),
+                line: Some(1),
+                column: Some(1),
+            },
+        };
         
         assert_eq!(property.id, "prop_1");
         assert_eq!(property.property_type, PropertyType::TypeSafety);

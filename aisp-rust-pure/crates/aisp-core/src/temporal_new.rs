@@ -702,7 +702,7 @@ impl EmptyResult for ModelCheckingResult {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::parser::AispParser;
+    use crate::parser_new::AispParser;
 
     #[test]
     fn test_unified_analyzer_creation() {

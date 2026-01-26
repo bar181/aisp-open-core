@@ -339,7 +339,6 @@ mod tests {
             unsatisfied: vec![],
             conflicts: vec![],
             satisfaction_score: 1.0,
-            solving_time_ms: 5,
         };
 
         let result = detector.detect_constraint_conflicts(&constraint_analysis)?;

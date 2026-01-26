@@ -83,7 +83,7 @@ pub enum RepresentationType {
 }
 
 /// Methods for proving semantic preservation
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum PreservationProofMethod {
     /// Denotational semantics equivalence
     DenotationalEquivalence,
@@ -598,7 +598,7 @@ through carefully verified transformation rules. □
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_fixtures::*;
+    use crate::ast::*;
 
     #[test]
     fn test_preservation_verification() {

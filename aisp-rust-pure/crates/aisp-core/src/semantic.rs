@@ -567,7 +567,7 @@ impl Default for SemanticAnalyzer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::parser::AispParser;
+    use crate::parser_new::AispParser;
 
     #[test]
     fn test_quality_tier_from_delta() {

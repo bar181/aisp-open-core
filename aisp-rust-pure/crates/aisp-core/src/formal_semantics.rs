@@ -524,7 +524,7 @@ impl AispSemantics {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_fixtures::*;
+    use crate::ast::*;
 
     #[test]
     fn test_semantic_interpretation() {

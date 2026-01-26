@@ -82,7 +82,7 @@ pub struct MathematicalStructure<Domain: Clone + Hash + Eq> {
 }
 
 /// Semantic Value in our domain-theoretic framework
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum SemanticValue {
     /// Bottom element (⊥) - undefined/error
     Bottom,
@@ -703,19 +703,18 @@ mod tests {
     #[test]
     fn test_logical_structure_evaluation() {
         let mut structure = LogicalStructure {
-            domain: HashSet::new(),
+            domain: vec![],
             predicates: HashMap::new(),
             functions: HashMap::new(),
             constants: HashMap::new(),
         };
         
         // Add domain elements
-        structure.domain.insert(SemanticValue::Natural(0));
-        structure.domain.insert(SemanticValue::Natural(1));
+        structure.domain.push(SemanticValue::Natural(0));
+        structure.domain.push(SemanticValue::Natural(1));
         
         // Add a predicate P(x) that's true for x=1
-        let mut p_relation = HashSet::new();
-        p_relation.insert(vec![SemanticValue::Natural(1)]);
+        let p_relation = vec![vec![SemanticValue::Natural(1)]];
         structure.predicates.insert("P".to_string(), p_relation);
         
         // Test ∃x. P(x) - should be true
@@ -754,7 +753,7 @@ mod tests {
         
         let application = LambdaCalculusTerm::Application(
             Box::new(identity),
-            Box::new(LambdaCalculusTerm::Literal(SemanticValue::Natural(42)))
+            Box::new(LambdaCalculusTerm::Literal(Rc::new(SemanticValue::Natural(42))))
         );
         
         // Verify structure is well-formed
