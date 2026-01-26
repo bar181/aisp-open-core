@@ -80,6 +80,9 @@ pub mod semantic_preservation;
 pub mod mathematical_semantics;
 pub mod mechanized_proofs;
 
+// Tri-vector signal validation
+pub mod tri_vector_validation;
+
 // Test fixtures and utilities are now handled inline in each module
 
 pub use ast::*;

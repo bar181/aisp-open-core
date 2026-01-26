@@ -8,6 +8,7 @@ use crate::error::*;
 use crate::parser_new::*;
 use crate::semantic::*;
 use crate::z3_integration::*;
+use crate::tri_vector_validation::*;
 use crate::{MAX_DOCUMENT_SIZE, AISP_VERSION};
 use std::time::{Duration, Instant};
 
@@ -28,6 +29,8 @@ pub struct ValidationConfig {
     pub enable_formal_verification: bool,
     /// Z3 verification timeout
     pub z3_timeout: Duration,
+    /// Enable tri-vector signal validation
+    pub enable_trivector_validation: bool,
 }
 
 impl Default for ValidationConfig {
@@ -40,6 +43,7 @@ impl Default for ValidationConfig {
             include_symbol_stats: false,
             enable_formal_verification: false,
             z3_timeout: Duration::from_secs(30),
+            enable_trivector_validation: true,
         }
     }
 }
@@ -79,6 +83,8 @@ pub struct ValidationResult {
     pub semantic_analysis: Option<SemanticAnalysis>,
     /// Formal verification results
     pub formal_verification: Option<FormalVerificationResult>,
+    /// Tri-vector validation results
+    pub trivector_validation: Option<TriVectorValidationResult>,
     /// All warnings collected
     pub warnings: Vec<AispWarning>,
     /// Error details (if validation failed)
@@ -105,6 +111,7 @@ impl ValidationResult {
             ast: None,
             semantic_analysis: None,
             formal_verification: None,
+            trivector_validation: None,
             warnings: Vec::new(),
             error: Some(error),
         }
@@ -118,6 +125,7 @@ impl ValidationResult {
         semantic_time: Duration,
         ast: Option<AispDocument>,
         formal_verification: Option<FormalVerificationResult>,
+        trivector_validation: Option<TriVectorValidationResult>,
     ) -> Self {
         Self {
             valid: analysis.valid,
@@ -136,6 +144,7 @@ impl ValidationResult {
             ast,
             semantic_analysis: Some(analysis.clone()),
             formal_verification,
+            trivector_validation,
             warnings: analysis.warnings,
             error: None,
         }
@@ -259,6 +268,22 @@ impl AispValidator {
             None
         };
 
+        // Perform tri-vector validation if enabled
+        let trivector_validation = if self.config.enable_trivector_validation {
+            match self.perform_trivector_validation(&document) {
+                Ok(trivector_result) => Some(trivector_result),
+                Err(err) => {
+                    // Add warning for tri-vector validation failure
+                    analysis.warnings.push(AispWarning::warning(
+                        format!("Tri-vector validation failed: {}", err)
+                    ));
+                    None
+                }
+            }
+        } else {
+            None
+        };
+
         // Create result
         let ast = if self.config.include_ast {
             Some(document)
@@ -273,6 +298,7 @@ impl AispValidator {
             semantic_time,
             ast,
             formal_verification,
+            trivector_validation,
         );
 
         // Apply timing configuration
@@ -384,6 +410,24 @@ impl AispValidator {
 
         // Perform verification
         z3_verifier.verify_document(document, relational_analysis, temporal_analysis)
+    }
+
+    /// Perform tri-vector signal validation
+    fn perform_trivector_validation(
+        &self,
+        document: &AispDocument,
+    ) -> AispResult<TriVectorValidationResult> {
+        let mut trivector_validator = TriVectorValidator::with_config(
+            TriVectorValidationConfig {
+                require_formal_proofs: self.config.strict_mode,
+                orthogonality_tolerance: 1e-10,
+                verify_safety_isolation: true,
+                z3_timeout_ms: self.config.z3_timeout.as_millis() as u64,
+                max_dimension: 2048,
+            }
+        );
+
+        trivector_validator.validate_document(document)
     }
 }
 
