@@ -6,14 +6,14 @@ This repository contains the complete AISP (AI Symbolic Protocol) implementation
 
 ```
 aisp-open-core/
-├── 📦 aisp-rust/                     # Published crate (simple API)
-├── 📦 aisp-rust-pure/               # Advanced implementation
-│   ├── crates/aisp-core/            # Core parsing and verification engine
-│   └── crates/aisp-cli/             # Command-line tools
-├── 📦 validator/                    # Node.js/WebAssembly implementation
-├── 📚 evidence/                     # Test documents and examples
-├── 📝 docs/                        # Architecture Decision Records (ADRs)
-└── 🔧 Cargo.toml                   # Unified workspace configuration
+├── 📦 aisp-rust/                           # Published crate (simple API)
+├── 📦 aisp-formal-verification/           # Advanced formal verification system
+│   ├── crates/aisp-core/                  # Core parsing and verification engine
+│   └── crates/aisp-cli/                   # Command-line tools
+├── 📦 validator/                          # Node.js/WebAssembly implementation
+├── 📚 evidence/                           # Test documents and examples
+├── 📝 docs/                              # Architecture Decision Records (ADRs)
+└── 🔧 Cargo.toml                         # Unified workspace configuration
 ```
 
 ## 🚀 **Quick Start**
@@ -40,7 +40,7 @@ cargo run --example basic
 
 **Advanced CLI with Formal Verification:**
 ```bash
-cd aisp-rust-pure
+cd aisp-formal-verification
 cargo run -- --level formal --format detailed validate ../evidence/tic-tac-toe/spec.aisp
 ```
 
@@ -59,7 +59,7 @@ npx aisp-validator validate ../evidence/tic-tac-toe/spec.aisp
 - **Features**: Basic validation, quality tiers, streaming support
 - **Target**: Production applications needing simple AISP validation
 
-### 2. **aisp-rust-pure** - Advanced Engine
+### 2. **aisp-formal-verification** - Advanced Engine
 - **Purpose**: Complete formal verification and analysis system
 - **Status**: 🔬 Research/Advanced implementation
 - **Features**: 
@@ -172,8 +172,9 @@ cargo doc --workspace --document-private-items
 - **validator**: Node.js/WebAssembly package
 
 ### Research Components (Advanced)
-- **aisp-core**: Advanced parsing and formal verification engine
-- **aisp-cli**: Research tools for formal analysis
+- **aisp-formal-verification**: Complete formal verification system
+  - **aisp-core**: Advanced parsing and formal verification engine
+  - **aisp-cli**: Research tools for formal analysis
 
 ### Shared Resources
 - **evidence/**: Test documents and examples
@@ -197,7 +198,7 @@ cargo doc --workspace --document-private-items
 
 ## 🤝 **Contributing**
 
-1. **Choose Component**: Pick aisp-rust (stable) or aisp-rust-pure (research)
+1. **Choose Component**: Pick aisp-rust (stable) or aisp-formal-verification (research)
 2. **Follow Patterns**: Use existing code style and architecture patterns
 3. **Test Changes**: Run relevant test suites
 4. **Update Documentation**: Keep ADRs and guides current

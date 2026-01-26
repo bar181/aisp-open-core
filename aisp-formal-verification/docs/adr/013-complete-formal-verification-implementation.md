@@ -5,7 +5,7 @@ Accepted - 2026-01-26
 
 ## Context
 
-Analysis of the current `aisp-rust-pure` implementation reveals:
+Analysis of the current `aisp-formal-verification` implementation reveals:
 
 **✅ Working Components:**
 - Comprehensive formal verification architecture (ADR-009)
