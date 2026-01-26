@@ -9,7 +9,10 @@ homepage.workspace = true
 description = "Core AISP parsing and validation engine"
 
 [features]
-default = ["std", "serde"]
+# Z3 verification is now default for formal methods compliance
+default = ["std", "serde", "z3-verification"]  
+# Minimal build without Z3 for development/testing
+minimal = ["std"]
 std = []
 serde = ["dep:serde"] 
 z3-verification = ["dep:z3"]
