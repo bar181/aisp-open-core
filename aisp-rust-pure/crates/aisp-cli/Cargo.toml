@@ -1,0 +1,29 @@
+[package]
+name = "aisp-cli"
+version = "0.1.0"
+edition = "2021"
+authors = ["AISP Development Team"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/bar181/aisp-open-core"
+homepage = "https://github.com/bar181/aisp-open-core"
+description = "Command-line interface for AISP validation and analysis"
+
+[features]
+default = []
+z3-verification = ["aisp-core/z3-verification"]
+
+[dependencies]
+aisp-core = { path = "../aisp-core" }
+clap = { version = "4.0", features = ["derive", "color"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+colored = "2.0"
+indicatif = "0.17"
+anyhow = "1.0"
+thiserror = "1.0"
+
+[dev-dependencies]
+tempfile = "3.0"
+assert_cmd = "2.0"
+predicates = "3.0"
