@@ -89,6 +89,24 @@ pub mod z3_verification;
 // Enhanced Z3 SMT solver integration (legacy re-exports)
 pub mod enhanced_z3_verification;
 
+// Ghost intent search validation
+pub mod ghost_intent_validation;
+
+// RossNet scoring validation
+pub mod rossnet_scoring;
+
+// Hebbian learning constraint validation
+pub mod hebbian_learning;
+
+// Anti-drift protocol verification
+pub mod anti_drift;
+
+// Reference.md specification compliance validator
+pub mod reference_validator;
+
+// Reference.md comprehensive integration testing
+pub mod reference_integration_test;
+
 // Test fixtures and utilities are now handled inline in each module
 
 pub use ast::*;
