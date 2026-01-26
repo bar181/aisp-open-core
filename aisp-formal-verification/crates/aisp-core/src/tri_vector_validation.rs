@@ -765,7 +765,7 @@ impl TriVectorValidator {
 
 impl VectorSpaceProperties {
     /// Default properties for real vector spaces
-    fn default_real_vector_space() -> Self {
+    pub fn default_real_vector_space() -> Self {
         Self {
             closed_under_addition: true,
             closed_under_scaling: true,
@@ -835,7 +835,10 @@ mod tests {
             blocks: vec![
                 // Would contain proper tri-vector type definitions
             ],
-            span: Span { start: 0, end: 0 },
+            span: Span {
+                start: Position { line: 1, column: 1, offset: 0 },
+                end: Position { line: 1, column: 1, offset: 0 },
+            },
         }
     }
 
