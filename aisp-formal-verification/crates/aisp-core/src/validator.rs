@@ -10,6 +10,10 @@ use crate::semantic::*;
 use crate::z3_integration::*;
 use crate::tri_vector_validation::*;
 use crate::enhanced_z3_verification::*;
+use crate::ghost_intent_validation::*;
+use crate::rossnet_scoring::*;
+use crate::hebbian_learning::*;
+use crate::anti_drift::*;
 use crate::{MAX_DOCUMENT_SIZE, AISP_VERSION};
 use std::time::{Duration, Instant};
 
@@ -34,6 +38,16 @@ pub struct ValidationConfig {
     pub enable_trivector_validation: bool,
     /// Enable enhanced Z3 verification
     pub enable_enhanced_z3: bool,
+    /// Enable ghost intent search validation
+    pub enable_ghost_intent_validation: bool,
+    /// Enable RossNet scoring validation
+    pub enable_rossnet_scoring: bool,
+    /// Enable Hebbian learning constraint validation
+    pub enable_hebbian_learning: bool,
+    /// Enable anti-drift protocol verification
+    pub enable_anti_drift: bool,
+    /// Strict formal verification mode - failures cause validation to fail instead of warnings
+    pub strict_formal_verification: bool,
 }
 
 impl Default for ValidationConfig {
@@ -48,6 +62,11 @@ impl Default for ValidationConfig {
             z3_timeout: Duration::from_secs(30),
             enable_trivector_validation: true,
             enable_enhanced_z3: Z3VerificationFacade::is_available(),
+            enable_ghost_intent_validation: true,
+            enable_rossnet_scoring: true,
+            enable_hebbian_learning: true,
+            enable_anti_drift: true,
+            strict_formal_verification: true,  // Default to strict mode for sound verification
         }
     }
 }
@@ -91,6 +110,14 @@ pub struct ValidationResult {
     pub trivector_validation: Option<TriVectorValidationResult>,
     /// Enhanced Z3 verification results
     pub enhanced_z3_verification: Option<EnhancedVerificationResult>,
+    /// Ghost intent search validation results
+    pub ghost_intent_validation: Option<GhostIntentValidationResult>,
+    /// RossNet scoring validation results
+    pub rossnet_validation: Option<RossNetValidationResult>,
+    /// Hebbian learning constraint validation results
+    pub hebbian_validation: Option<HebbianValidationResult>,
+    /// Anti-drift protocol verification results
+    pub anti_drift_validation: Option<AntiDriftValidationResult>,
     /// All warnings collected
     pub warnings: Vec<AispWarning>,
     /// Error details (if validation failed)
@@ -119,6 +146,10 @@ impl ValidationResult {
             formal_verification: None,
             trivector_validation: None,
             enhanced_z3_verification: None,
+            ghost_intent_validation: None,
+            rossnet_validation: None,
+            hebbian_validation: None,
+            anti_drift_validation: None,
             warnings: Vec::new(),
             error: Some(error),
         }
@@ -134,6 +165,10 @@ impl ValidationResult {
         formal_verification: Option<FormalVerificationResult>,
         trivector_validation: Option<TriVectorValidationResult>,
         enhanced_z3_verification: Option<EnhancedVerificationResult>,
+        ghost_intent_validation: Option<GhostIntentValidationResult>,
+        rossnet_validation: Option<RossNetValidationResult>,
+        hebbian_validation: Option<HebbianValidationResult>,
+        anti_drift_validation: Option<AntiDriftValidationResult>,
     ) -> Self {
         Self {
             valid: analysis.valid,
@@ -154,6 +189,10 @@ impl ValidationResult {
             formal_verification,
             trivector_validation,
             enhanced_z3_verification,
+            ghost_intent_validation,
+            rossnet_validation,
+            hebbian_validation,
+            anti_drift_validation,
             warnings: analysis.warnings,
             error: None,
         }
@@ -298,11 +337,125 @@ impl AispValidator {
             match self.perform_enhanced_z3_verification(&document, trivector_validation.as_ref()) {
                 Ok(z3_result) => Some(z3_result),
                 Err(err) => {
-                    // Add warning for enhanced Z3 verification failure
-                    analysis.warnings.push(AispWarning::warning(
-                        format!("Enhanced Z3 verification failed: {}", err)
-                    ));
-                    None
+                    // Formal verification failure should cause validation to fail, not just warn
+                    if self.config.strict_formal_verification {
+                        return ValidationResult::failed(
+                            AispError::validation_error(
+                                format!("Enhanced Z3 verification failed: {}. Enable 'strict_formal_verification: false' to downgrade to warnings.", err)
+                            ),
+                            document_size,
+                        );
+                    } else {
+                        // Add warning only if not in strict mode
+                        analysis.warnings.push(AispWarning::warning(
+                            format!("Enhanced Z3 verification failed: {}", err)
+                        ));
+                        None
+                    }
+                }
+            }
+        } else {
+            None
+        };
+
+        // Perform ghost intent validation if enabled
+        let ghost_intent_validation = if self.config.enable_ghost_intent_validation {
+            match self.perform_ghost_intent_validation(&document) {
+                Ok(ghost_result) => Some(ghost_result),
+                Err(err) => {
+                    // Formal verification failure should cause validation to fail, not just warn
+                    if self.config.strict_formal_verification {
+                        return ValidationResult::failed(
+                            AispError::validation_error(
+                                format!("Ghost intent validation failed: {}. Enable 'strict_formal_verification: false' to downgrade to warnings.", err)
+                            ),
+                            document_size,
+                        );
+                    } else {
+                        // Add warning only if not in strict mode
+                        analysis.warnings.push(AispWarning::warning(
+                            format!("Ghost intent validation failed: {}", err)
+                        ));
+                        None
+                    }
+                }
+            }
+        } else {
+            None
+        };
+
+        // Perform RossNet scoring validation if enabled
+        let rossnet_validation = if self.config.enable_rossnet_scoring {
+            match self.perform_rossnet_validation(&document, &analysis) {
+                Ok(rossnet_result) => Some(rossnet_result),
+                Err(err) => {
+                    // Formal verification failure should cause validation to fail, not just warn
+                    if self.config.strict_formal_verification {
+                        return ValidationResult::failed(
+                            AispError::validation_error(
+                                format!("RossNet scoring validation failed: {}. Enable 'strict_formal_verification: false' to downgrade to warnings.", err)
+                            ),
+                            document_size,
+                        );
+                    } else {
+                        // Add warning only if not in strict mode
+                        analysis.warnings.push(AispWarning::warning(
+                            format!("RossNet scoring validation failed: {}", err)
+                        ));
+                        None
+                    }
+                }
+            }
+        } else {
+            None
+        };
+
+        // Perform Hebbian learning validation if enabled
+        let hebbian_validation = if self.config.enable_hebbian_learning {
+            match self.perform_hebbian_validation(&document, &analysis) {
+                Ok(hebbian_result) => Some(hebbian_result),
+                Err(err) => {
+                    // Formal verification failure should cause validation to fail, not just warn
+                    if self.config.strict_formal_verification {
+                        return ValidationResult::failed(
+                            AispError::validation_error(
+                                format!("Hebbian learning validation failed: {}. Enable 'strict_formal_verification: false' to downgrade to warnings.", err)
+                            ),
+                            document_size,
+                        );
+                    } else {
+                        // Add warning only if not in strict mode
+                        analysis.warnings.push(AispWarning::warning(
+                            format!("Hebbian learning validation failed: {}", err)
+                        ));
+                        None
+                    }
+                }
+            }
+        } else {
+            None
+        };
+
+        // Perform anti-drift protocol validation if enabled
+        let anti_drift_validation = if self.config.enable_anti_drift {
+            match self.perform_anti_drift_validation(&document, &analysis) {
+                Ok(anti_drift_result) => Some(anti_drift_result),
+                Err(err) => {
+                    // Formal verification failure should cause validation to fail, not just warn
+                    if self.config.strict_formal_verification {
+                        return ValidationResult::failed(
+                            AispError::validation_error(
+                                format!("Anti-drift protocol validation failed: {}. Enable 'strict_formal_verification: false' to downgrade to warnings.", err)
+                            ),
+                            document_size,
+                        );
+                    } else {
+                        // Add warning only if not in strict mode
+                        analysis.warnings.push(AispWarning::warning(
+                            format!("Anti-drift protocol validation failed: {}", err)
+                        ));
+                        None
+                    }
                 }
             }
         } else {
@@ -325,6 +478,10 @@ impl AispValidator {
             formal_verification,
             trivector_validation,
             enhanced_z3_verification,
+            ghost_intent_validation,
+            rossnet_validation,
+            hebbian_validation,
+            anti_drift_validation,
         );
 
         // Apply timing configuration
@@ -464,6 +621,113 @@ impl AispValidator {
     ) -> AispResult<EnhancedVerificationResult> {
         let mut z3_facade = Z3VerificationFacade::new()?;
         z3_facade.verify_document(document, trivector_result)
+    }
+
+    /// Perform ghost intent search validation
+    fn perform_ghost_intent_validation(
+        &self,
+        document: &AispDocument,
+    ) -> AispResult<GhostIntentValidationResult> {
+        let config = GhostIntentConfig {
+            min_confidence_threshold: 0.6,
+            max_analysis_time: self.config.z3_timeout,
+            enable_formal_verification: self.config.enable_formal_verification,
+            z3_timeout_ms: (self.config.z3_timeout.as_millis() as u32).min(30000),
+        };
+        
+        let mut validator = GhostIntentValidator::new(config);
+        validator.validate_ghost_intents(document)
+    }
+
+    /// Perform RossNet scoring validation
+    fn perform_rossnet_validation(
+        &self,
+        document: &AispDocument,
+        analysis: &SemanticAnalysis,
+    ) -> AispResult<RossNetValidationResult> {
+        let config = RossNetConfig {
+            min_rossnet_score: if self.config.strict_mode { 0.8 } else { 0.7 },
+            max_analysis_time: Duration::from_secs(10),
+            enable_caching: true,
+            similarity_weight: 0.4,
+            fitness_weight: 0.35,
+            affinity_weight: 0.25,
+            reference_document: None,
+        };
+        
+        let semantic_result = SemanticAnalysisResult {
+            delta: analysis.delta,
+            ambiguity: analysis.ambiguity,
+            completeness: analysis.completeness,
+            tier: analysis.tier.clone(),
+            quality_score: analysis.quality_score,
+            validation_errors: analysis.errors.iter().map(|e| e.to_string()).collect(),
+            warnings: analysis.warnings.iter().map(|w| w.to_string()).collect(),
+        };
+        
+        let mut validator = RossNetValidator::new(config);
+        validator.validate_rossnet_scoring(document, &semantic_result)
+    }
+
+    /// Perform Hebbian learning constraint validation
+    fn perform_hebbian_validation(
+        &self,
+        document: &AispDocument,
+        analysis: &SemanticAnalysis,
+    ) -> AispResult<HebbianValidationResult> {
+        let config = HebbianConfig {
+            target_penalty_ratio: 10.0,
+            penalty_ratio_tolerance: if self.config.strict_mode { 0.5 } else { 1.0 },
+            min_learning_rate: 0.001,
+            max_learning_rate: 0.1,
+            max_weight_update: 1.0,
+            min_temporal_consistency: if self.config.strict_mode { 0.9 } else { 0.8 },
+            max_analysis_time: Duration::from_secs(5),
+            enable_plasticity_analysis: true,
+        };
+        
+        let semantic_result = SemanticAnalysisResult {
+            delta: analysis.delta,
+            ambiguity: analysis.ambiguity,
+            completeness: analysis.completeness,
+            tier: analysis.tier.clone(),
+            quality_score: analysis.quality_score,
+            validation_errors: analysis.errors.iter().map(|e| e.to_string()).collect(),
+            warnings: analysis.warnings.iter().map(|w| w.to_string()).collect(),
+        };
+        
+        let mut validator = HebbianValidator::new(config);
+        validator.validate_hebbian_learning(document, &semantic_result)
+    }
+
+    /// Perform anti-drift protocol validation
+    fn perform_anti_drift_validation(
+        &self,
+        document: &AispDocument,
+        analysis: &SemanticAnalysis,
+    ) -> AispResult<AntiDriftValidationResult> {
+        let config = AntiDriftConfig {
+            max_drift_velocity: if self.config.strict_mode { 0.05 } else { 0.1 },
+            severity_threshold: if self.config.strict_mode { 0.2 } else { 0.3 },
+            min_stability_score: if self.config.strict_mode { 0.9 } else { 0.8 },
+            analysis_time_window: Duration::from_secs(3600),
+            max_analysis_time: Duration::from_secs(10),
+            enable_auto_correction: true,
+            reference_baseline: None,
+        };
+        
+        let semantic_result = SemanticAnalysisResult {
+            delta: analysis.delta,
+            ambiguity: analysis.ambiguity,
+            completeness: analysis.completeness,
+            tier: analysis.tier.clone(),
+            quality_score: analysis.quality_score,
+            validation_errors: analysis.errors.iter().map(|e| e.to_string()).collect(),
+            warnings: analysis.warnings.iter().map(|w| w.to_string()).collect(),
+        };
+        
+        let mut validator = AntiDriftValidator::new(config);
+        validator.validate_anti_drift(document, &semantic_result)
     }
 }
 
