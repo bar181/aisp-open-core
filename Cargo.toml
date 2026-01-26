@@ -1,0 +1,68 @@
+[workspace]
+members = [
+    "aisp-rust",
+    "aisp-rust-pure/crates/aisp-core", 
+    "aisp-rust-pure/crates/aisp-cli",
+]
+resolver = "2"
+
+# Workspace package defaults
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Bradley Ross (https://github.com/bar181)", "AISP Development Team"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/bar181/aisp-open-core"
+homepage = "https://github.com/bar181/aisp-open-core"
+
+[workspace.dependencies]
+# Core dependencies
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+anyhow = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+
+# CLI dependencies  
+clap = { version = "4.0", features = ["derive"] }
+colored = "2.0"
+indicatif = "0.17"
+
+# Analysis dependencies
+petgraph = "0.6"
+chrono = "0.4"
+uuid = { version = "1.0", features = ["v4"] }
+
+# Testing dependencies
+proptest = "1.0"
+assert_cmd = "2.0"
+
+# Z3 integration (optional in individual crates)
+z3 = "0.12"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.dev]
+opt-level = 1
+debug = true
+
+[profile.test]
+opt-level = 1
+
+# Optimized profile for CLI tools
+[profile.cli]
+inherits = "release"
+debug = false
+strip = "symbols"
+
+# WASM-optimized profile
+[profile.wasm]
+inherits = "release"
+opt-level = "z"
+strip = true
+panic = "abort"
+lto = true

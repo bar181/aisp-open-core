@@ -1,11 +1,11 @@
 [package]
 name = "aisp-cli"
-version = "0.1.0"
-edition = "2021"
-authors = ["AISP Development Team"]
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/bar181/aisp-open-core"
-homepage = "https://github.com/bar181/aisp-open-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 description = "Command-line interface for AISP validation and analysis"
 
 [features]
@@ -18,16 +18,16 @@ path = "src/bin/run_verification.rs"
 
 [dependencies]
 aisp-core = { path = "../aisp-core" }
-clap = { version = "4.0", features = ["derive", "color"] }
-serde = { version = "1.0", features = ["derive"] }
+clap = { workspace = true, features = ["derive", "color"] }
+serde.workspace = true
 serde_json = "1.0"
-tokio = { version = "1.0", features = ["full"] }
-colored = "2.0"
-indicatif = "0.17"
-anyhow = "1.0"
-thiserror = "1.0"
+tokio.workspace = true
+colored.workspace = true
+indicatif.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
 
 [dev-dependencies]
 tempfile = "3.0"
-assert_cmd = "2.0"
+assert_cmd.workspace = true
 predicates = "3.0"

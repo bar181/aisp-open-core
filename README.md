@@ -2,6 +2,8 @@
 
 **The specification language designed for AI agents, not humans.** AISP is a proof-carrying protocol that LLMs understand natively—no training, no fine-tuning, no special interpreters required. Reduces ambiguity from 40-65% (natural language) to under 2%.
 
+> 📋 **See [WORKSPACE.md](WORKSPACE.md)** for complete project organization and development guide.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/Version-5.1%20Platinum-blue.svg)]()
 [![Harvard Research](https://img.shields.io/badge/Harvard-Capstone%20Project-crimson.svg)]()

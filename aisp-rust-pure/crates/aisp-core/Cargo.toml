@@ -1,11 +1,11 @@
 [package]
 name = "aisp-core"
-version = "0.1.0"
-edition = "2021"
-authors = ["AISP Development Team"]
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/bar181/aisp-open-core"
-homepage = "https://github.com/bar181/aisp-open-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true  
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 description = "Core AISP parsing and validation engine"
 
 [features]
@@ -16,11 +16,11 @@ z3-verification = ["dep:z3"]
 z3-static = ["z3-verification"]
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"], optional = true }
-thiserror = "1.0"
-z3 = { version = "0.12", optional = true }
-uuid = { version = "1.0", features = ["v4"] }
+serde = { workspace = true, optional = true }
+thiserror.workspace = true
+z3 = { workspace = true, optional = true }
+uuid.workspace = true
 
 [dev-dependencies]
-tokio = { version = "1.0", features = ["full"] }
-proptest = "1.4"
+tokio.workspace = true
+proptest.workspace = true
