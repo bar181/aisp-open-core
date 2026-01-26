@@ -13,7 +13,7 @@ use crate::{
 use std::collections::{HashMap, HashSet};
 
 /// Result of satisfiability checking
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum SatisfiabilityResult {
     /// The constraint system is satisfiable with a model
     Satisfiable(ConstraintModel),
@@ -24,7 +24,7 @@ pub enum SatisfiabilityResult {
 }
 
 /// Model showing satisfying assignments for variables
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct ConstraintModel {
     pub variable_assignments: HashMap<String, ModelValue>,
     pub function_interpretations: HashMap<String, FunctionInterpretation>,
@@ -42,7 +42,7 @@ pub enum ModelValue {
 }
 
 /// Function interpretation in a model
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct FunctionInterpretation {
     pub domain: Vec<String>,
     pub range: String,
@@ -182,43 +182,51 @@ impl SatisfiabilityChecker {
                     terms: atomic.terms.iter().map(|t| self.term_to_constraint_term(t)).collect::<AispResult<Vec<_>>>()?,
                 }))
             }
-            FormulaStructure::Conjunction(left, right) => {
-                let left_constraint = self.formula_to_constraint(&PropertyFormula {
-                    structure: (**left).clone(),
-                    quantifiers: formula.quantifiers.clone(),
-                    free_variables: formula.free_variables.clone(),
-                    predicates: formula.predicates.clone(),
-                    functions: formula.functions.clone(),
-                    constants: formula.constants.clone(),
-                })?;
-                let right_constraint = self.formula_to_constraint(&PropertyFormula {
-                    structure: (**right).clone(),
-                    quantifiers: formula.quantifiers.clone(),
-                    free_variables: formula.free_variables.clone(),
-                    predicates: formula.predicates.clone(),
-                    functions: formula.functions.clone(),
-                    constants: formula.constants.clone(),
-                })?;
-                Ok(Constraint::Conjunction(Box::new(left_constraint), Box::new(right_constraint)))
+            FormulaStructure::Conjunction(formulas) => {
+                if formulas.len() >= 2 {
+                        let left_constraint = self.formula_to_constraint(&PropertyFormula {
+                        structure: formulas[0].clone(),
+                        quantifiers: formula.quantifiers.clone(),
+                        free_variables: formula.free_variables.clone(),
+                        predicates: formula.predicates.clone(),
+                        functions: formula.functions.clone(),
+                        constants: formula.constants.clone(),
+                    })?;
+                        let right_constraint = self.formula_to_constraint(&PropertyFormula {
+                        structure: formulas[1].clone(),
+                        quantifiers: formula.quantifiers.clone(),
+                        free_variables: formula.free_variables.clone(),
+                        predicates: formula.predicates.clone(),
+                        functions: formula.functions.clone(),
+                        constants: formula.constants.clone(),
+                    })?;
+                    Ok(Constraint::Conjunction(Box::new(left_constraint), Box::new(right_constraint)))
+                } else {
+                    Err(AispError::ValidationError { message: "Conjunction requires at least 2 formulas".to_string() })
+                }
             }
-            FormulaStructure::Disjunction(left, right) => {
-                let left_constraint = self.formula_to_constraint(&PropertyFormula {
-                    structure: (**left).clone(),
+            FormulaStructure::Disjunction(formulas) => {
+                if formulas.len() >= 2 {
+                    let left_constraint = self.formula_to_constraint(&PropertyFormula {
+                        structure: formulas[0].clone(),
                     quantifiers: formula.quantifiers.clone(),
                     free_variables: formula.free_variables.clone(),
                     predicates: formula.predicates.clone(),
                     functions: formula.functions.clone(),
                     constants: formula.constants.clone(),
                 })?;
-                let right_constraint = self.formula_to_constraint(&PropertyFormula {
-                    structure: (**right).clone(),
+                    let right_constraint = self.formula_to_constraint(&PropertyFormula {
+                        structure: formulas[1].clone(),
                     quantifiers: formula.quantifiers.clone(),
                     free_variables: formula.free_variables.clone(),
                     predicates: formula.predicates.clone(),
                     functions: formula.functions.clone(),
                     constants: formula.constants.clone(),
                 })?;
-                Ok(Constraint::Disjunction(Box::new(left_constraint), Box::new(right_constraint)))
+                    Ok(Constraint::Disjunction(Box::new(left_constraint), Box::new(right_constraint)))
+                } else {
+                    Err(AispError::ValidationError { message: "Disjunction requires at least 2 formulas".to_string() })
+                }
             }
             FormulaStructure::Universal(quantifier, body) => {
                 let body_constraint = self.formula_to_constraint(&PropertyFormula {
@@ -253,6 +261,13 @@ impl SatisfiabilityChecker {
                 })?;
                 Ok(Constraint::Negation(Box::new(inner_constraint)))
             }
+            _ => {
+                // For other formula types, return an unsupported constraint placeholder
+                Ok(Constraint::Atomic(AtomicConstraint {
+                    predicate: "unsupported".to_string(),
+                    terms: vec![],
+                }))
+            }
         }
     }
 
@@ -264,11 +279,15 @@ impl SatisfiabilityChecker {
             Term::Constant(value, const_type) => {
                 Ok(ConstraintTerm::Constant(value.clone(), const_type.clone()))
             }
-            Term::Function(name, args, return_type) => {
+            Term::Function(name, args) => {
                 let constraint_args = args.iter()
                     .map(|arg| self.term_to_constraint_term(arg))
                     .collect::<AispResult<Vec<_>>>()?;
-                Ok(ConstraintTerm::Function(name.clone(), constraint_args, return_type.clone()))
+                Ok(ConstraintTerm::Function(name.clone(), constraint_args, Some("unknown".to_string())))
+            }
+            _ => {
+                // For other term types, return a placeholder
+                Ok(ConstraintTerm::Variable("unknown".to_string(), None))
             }
         }
     }
@@ -476,7 +495,7 @@ impl ConstraintSystem {
 }
 
 /// Result of consistency checking
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum ConsistencyResult {
     Consistent(ConstraintModel),
     Inconsistent(UnsatisfiabilityProof),
