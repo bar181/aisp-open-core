@@ -152,7 +152,7 @@ pub struct ProofComplexity {
 }
 
 /// Description of a verification failure
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct VerificationFailure {
     /// Invariant that failed verification
     pub invariant_id: String,
@@ -349,7 +349,8 @@ impl FormalVerifier {
         let start_time = Instant::now();
         
         // Try verification methods in order of preference
-        for method in &self.config.enabled_methods {
+        let methods = self.config.enabled_methods.clone();
+        for method in &methods {
             if let Ok(proof) = self.try_verification_method(property, method) {
                 let final_proof = self.finalize_proof(proof, start_time.elapsed(), method.clone());
                 
