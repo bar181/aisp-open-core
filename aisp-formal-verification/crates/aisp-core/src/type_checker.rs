@@ -18,10 +18,63 @@ pub struct TypeChecker {
 impl TypeChecker {
     /// Create a new type checker
     pub fn new() -> Self {
-        Self {
+        let mut type_checker = Self {
             type_definitions: HashMap::new(),
             errors: Vec::new(),
+        };
+        
+        // Add built-in mathematical types
+        type_checker.add_builtin_types();
+        type_checker
+    }
+    
+    /// Add built-in AISP mathematical types
+    fn add_builtin_types(&mut self) {
+        // Vector space types commonly used in AISP
+        self.type_definitions.insert(
+            "VectorSpace768".to_string(),
+            TypeExpression::Basic(BasicType::VectorSpace(768)),
+        );
+        self.type_definitions.insert(
+            "VectorSpace512".to_string(),
+            TypeExpression::Basic(BasicType::VectorSpace(512)),
+        );
+        self.type_definitions.insert(
+            "VectorSpace256".to_string(),
+            TypeExpression::Basic(BasicType::VectorSpace(256)),
+        );
+        
+        // Mathematical structures
+        self.type_definitions.insert(
+            "RealVector".to_string(),
+            TypeExpression::Basic(BasicType::RealVector),
+        );
+        self.type_definitions.insert(
+            "DirectSum".to_string(),
+            TypeExpression::Basic(BasicType::DirectSum),
+        );
+        self.type_definitions.insert(
+            "Structure".to_string(),
+            TypeExpression::Basic(BasicType::MathematicalStructure("Structure".to_string())),
+        );
+        self.type_definitions.insert(
+            "Composite".to_string(),
+            TypeExpression::Basic(BasicType::MathematicalStructure("Composite".to_string())),
+        );
+        
+        // Dimension-specific real vector spaces (ℝⁿ notation)
+        for n in [7, 8, 256, 512, 768] {
+            self.type_definitions.insert(
+                format!("ℝ{}", n),
+                TypeExpression::Basic(BasicType::VectorSpace(n)),
+            );
         }
+        
+        // Generic real vector space (ℝⁿ)
+        self.type_definitions.insert(
+            "ℝⁿ".to_string(),
+            TypeExpression::Basic(BasicType::RealVector),
+        );
     }
 
     /// Check types throughout the entire document
@@ -50,10 +103,29 @@ impl TypeChecker {
         for block in &document.blocks {
             if let AispBlock::Types(types_block) = block {
                 for (name, definition) in &types_block.definitions {
-                    self.type_definitions.insert(name.clone(), definition.type_expr.clone());
+                    // Check for redefinition of user-defined types (not built-ins)
+                    if self.is_user_defined_type(name) {
+                        self.errors.push(AispError::TypeError {
+                            message: format!("Type '{}' redefined, using first definition", name),
+                        });
+                    } else {
+                        self.type_definitions.insert(name.clone(), definition.type_expr.clone());
+                    }
                 }
             }
         }
+    }
+    
+    /// Check if a type is user-defined (not a built-in type)
+    fn is_user_defined_type(&self, name: &str) -> bool {
+        // Built-in mathematical types that should not be flagged as redefinitions
+        let builtin_types = [
+            "VectorSpace768", "VectorSpace512", "VectorSpace256",
+            "RealVector", "DirectSum", "Structure", "Composite",
+            "ℝ7", "ℝ8", "ℝ256", "ℝ512", "ℝ768", "ℝⁿ"
+        ];
+        
+        !builtin_types.contains(&name) && self.type_definitions.contains_key(name)
     }
 
     /// Validate that type definitions are well-formed

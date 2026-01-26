@@ -67,6 +67,25 @@ impl QualityTier {
     }
 }
 
+/// Simplified semantic analysis result for validation modules
+#[derive(Debug, Clone)]
+pub struct SemanticAnalysisResult {
+    /// Semantic density (δ)
+    pub delta: f64,
+    /// Calculated ambiguity level
+    pub ambiguity: f64,
+    /// Completeness score
+    pub completeness: f64,
+    /// Quality tier
+    pub tier: QualityTier,
+    /// Overall quality score
+    pub quality_score: f64,
+    /// Validation errors
+    pub validation_errors: Vec<String>,
+    /// Analysis warnings
+    pub warnings: Vec<String>,
+}
+
 /// Semantic analysis result
 #[derive(Debug, Clone)]
 pub struct SemanticAnalysis {
@@ -84,6 +103,12 @@ pub struct SemanticAnalysis {
     pub block_score: f64,
     /// Binding density score
     pub binding_score: f64,
+    /// Completeness score
+    pub completeness: f64,
+    /// Overall quality score
+    pub quality_score: f64,
+    /// Validation errors
+    pub errors: Vec<AispError>,
     /// Type checking results
     pub type_analysis: TypeAnalysis,
     /// Level 4 relational analysis results
@@ -174,6 +199,67 @@ impl SemanticAnalyzer {
             warnings: Vec::new(),
         }
     }
+    
+    /// Add built-in AISP mathematical types
+    fn add_builtin_types(&mut self) {
+        // Vector space types commonly used in AISP
+        self.type_env.insert(
+            "VectorSpace768".to_string(),
+            TypeExpression::Basic(BasicType::VectorSpace(768)),
+        );
+        self.type_env.insert(
+            "VectorSpace512".to_string(),
+            TypeExpression::Basic(BasicType::VectorSpace(512)),
+        );
+        self.type_env.insert(
+            "VectorSpace256".to_string(),
+            TypeExpression::Basic(BasicType::VectorSpace(256)),
+        );
+        
+        // Mathematical structures
+        self.type_env.insert(
+            "RealVector".to_string(),
+            TypeExpression::Basic(BasicType::RealVector),
+        );
+        self.type_env.insert(
+            "DirectSum".to_string(),
+            TypeExpression::Basic(BasicType::DirectSum),
+        );
+        self.type_env.insert(
+            "Structure".to_string(),
+            TypeExpression::Basic(BasicType::MathematicalStructure("Structure".to_string())),
+        );
+        self.type_env.insert(
+            "Composite".to_string(),
+            TypeExpression::Basic(BasicType::MathematicalStructure("Composite".to_string())),
+        );
+        
+        // Dimension-specific real vector spaces (ℝⁿ notation)
+        for n in [7, 8, 256, 512, 768] {
+            self.type_env.insert(
+                format!("ℝ{}", n),
+                TypeExpression::Basic(BasicType::VectorSpace(n)),
+            );
+        }
+        
+        // Generic real vector space (ℝⁿ)
+        self.type_env.insert(
+            "ℝⁿ".to_string(),
+            TypeExpression::Basic(BasicType::RealVector),
+        );
+    }
+    
+    /// Check if a type is user-defined (not a built-in type)
+    fn is_user_defined_type(&self, name: &str) -> bool {
+        // Built-in mathematical types that should not be flagged as redefinitions
+        let builtin_types = [
+            "VectorSpace768", "VectorSpace512", "VectorSpace256",
+            "RealVector", "DirectSum", "Structure", "Composite",
+            "ℝ7", "ℝ8", "ℝ256", "ℝ512", "ℝ768", "ℝⁿ"
+        ];
+        
+        !builtin_types.contains(&name) && self.type_env.contains_key(name)
+    }
 
     /// Perform complete semantic analysis
     pub fn analyze(&mut self, doc: &AispDocument, source: &str) -> AispResult<SemanticAnalysis> {
@@ -184,11 +270,21 @@ impl SemanticAnalyzer {
         self.var_scopes.push(HashMap::new());
         self.warnings.clear();
 
+        // Add built-in mathematical types first
+        self.add_builtin_types();
+
         // Collect type definitions first
         for block in &doc.blocks {
             if let AispBlock::Types(types_block) = block {
                 for (name, type_def) in &types_block.definitions {
-                    self.type_env.insert(name.clone(), type_def.type_expr.clone());
+                    // Check for redefinition of user-defined types (not built-ins)
+                    if self.is_user_defined_type(name) {
+                        self.warnings.push(AispWarning::warning(
+                            format!("Type '{}' redefined, using first definition", name)
+                        ));
+                    } else {
+                        self.type_env.insert(name.clone(), type_def.type_expr.clone());
+                    }
                 }
             }
         }
@@ -271,6 +367,8 @@ impl SemanticAnalyzer {
                    relational_valid &&
                    temporal_valid;
 
+        let tier_value = tier.value() as f64;
+
         Ok(SemanticAnalysis {
             valid,
             tier,
@@ -279,6 +377,9 @@ impl SemanticAnalyzer {
             ambiguity,
             block_score: self.calculate_block_score(&doc.blocks),
             binding_score: self.calculate_binding_score(&symbol_stats),
+            completeness: delta * 0.8 + (1.0 - ambiguity) * 0.2, // Simple completeness calculation
+            quality_score: delta * 0.6 + (1.0 - ambiguity) * 0.3 + tier_value * 0.1,
+            errors: vec![], // Initialize with empty errors
             type_analysis,
             relational_analysis,
             temporal_analysis,
