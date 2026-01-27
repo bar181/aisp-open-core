@@ -372,7 +372,7 @@ async fn validate_single_file(cli: &Cli, file: &Path) -> Result<CliValidationRes
 
     // Add analysis summaries based on validation level
     if let Some(semantic) = &validation_result.semantic_analysis {
-        if let Some(rel_analysis) = &semantic.relational_analysis {
+        if let Some(rel_analysis) = &semantic.relational_analysis() {
             cli_result.relational_analysis = Some(RelationalSummary {
                 consistency_score: rel_analysis.consistency_score,
                 constraints_total: rel_analysis.constraint_analysis.constraints.len(),
@@ -381,7 +381,7 @@ async fn validate_single_file(cli: &Cli, file: &Path) -> Result<CliValidationRes
             });
         }
 
-        if let Some(temp_analysis) = &semantic.temporal_analysis {
+        if let Some(temp_analysis) = &semantic.temporal_analysis() {
             cli_result.temporal_analysis = Some(TemporalSummary {
                 consistency_score: temp_analysis.consistency_score,
                 ltl_formulas: temp_analysis.formula_analysis.formulas.len(),
