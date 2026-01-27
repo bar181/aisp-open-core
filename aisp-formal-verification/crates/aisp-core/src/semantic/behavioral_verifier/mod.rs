@@ -111,10 +111,11 @@ impl BehavioralVerifier {
 
         // Generate security assessment
         let security_assessment = BehavioralSecurityAssessment {
-            overall_score: 0.8,
-            compliance_status: ComplianceLevel::PartiallyCompliant,
             threat_level: ThreatLevel::Low,
-            vulnerabilities: violations.clone(),
+            attack_surface_size: 0.3,
+            vulnerability_count: violations.len(),
+            security_score: 0.8,
+            compliance_level: ComplianceLevel::PartiallyCompliant,
         };
 
         // Generate recommendations

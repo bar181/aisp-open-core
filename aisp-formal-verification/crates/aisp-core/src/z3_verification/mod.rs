@@ -10,6 +10,8 @@
 //! - `enhanced_verifier`: Enhanced Z3 verifier with AISP capabilities
 //! - `smt_interface`: SMT syntax validation and Z3 integration
 //! - `facade`: High-level verification facade
+//!
+//! Compatible with Z3 version 4.15.4 and z3 crate 0.11
 
 pub mod types;
 pub mod environment; 
@@ -17,8 +19,6 @@ pub mod properties;
 pub mod enhanced_verifier;
 pub mod smt_interface;
 pub mod facade;
-
-// Legacy verifier (deprecated, use enhanced_verifier and facade instead)
 pub mod verifier;
 
 // Re-export main interfaces for convenience
