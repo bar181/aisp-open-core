@@ -140,37 +140,31 @@ fn test_z3_required_enterprise_pipeline() {
         .expect("Enterprise pipeline verification should succeed");
 
     println!("📊 Enterprise pipeline results:");
-    println!("  - Overall success: {}", result.overall_success);
-    println!("  - Semantic score: {:.2}", result.semantic_score);
-    println!("  - Behavioral score: {:.2}", result.behavioral_score);
-    println!("  - Security score: {:.2}", result.security_score);
-    println!("  - Compliance score: {:.2}", result.compliance_score);
-    println!("  - Execution time: {:?}", result.execution_time);
+    println!("  - Overall security score: {:.2}", result.overall_security_score);
+    println!("  - Enterprise compliance score: {:.2}", result.enterprise_compliance_score);
+    println!("  - Verification confidence: {:.2}", result.verification_confidence);
+    println!("  - Production readiness: {:.2}", result.production_readiness_score);
+    println!("  - Attack resistance: {:?}", result.attack_resistance_rating);
 
     // Validation assertions
     assert!(
-        result.semantic_score >= 0.0 && result.semantic_score <= 1.0,
-        "Semantic score should be between 0.0 and 1.0"
+        result.overall_security_score >= 0.0 && result.overall_security_score <= 1.0,
+        "Overall security score should be between 0.0 and 1.0"
     );
 
     assert!(
-        result.behavioral_score >= 0.0 && result.behavioral_score <= 1.0,
-        "Behavioral score should be between 0.0 and 1.0"
+        result.enterprise_compliance_score >= 0.0 && result.enterprise_compliance_score <= 1.0,
+        "Enterprise compliance score should be between 0.0 and 1.0"
     );
 
     assert!(
-        result.security_score >= 0.0 && result.security_score <= 1.0,
-        "Security score should be between 0.0 and 1.0"
+        result.verification_confidence >= 0.0 && result.verification_confidence <= 1.0,
+        "Verification confidence should be between 0.0 and 1.0"
     );
 
     assert!(
-        result.compliance_score >= 0.0 && result.compliance_score <= 1.0,
-        "Compliance score should be between 0.0 and 1.0"
-    );
-
-    assert!(
-        result.execution_time.as_millis() < 60000,
-        "Enterprise verification should complete within 1 minute"
+        result.production_readiness_score >= 0.0 && result.production_readiness_score <= 1.0,
+        "Production readiness score should be between 0.0 and 1.0"
     );
 
     println!("✅ Enterprise pipeline test passed successfully");
@@ -308,17 +302,14 @@ fn test_z3_required_performance() {
     println!("✅ Performance test passed - formal verification is efficient");
 }
 
-/// Test that demonstrates formal verification capabilities when Z3 is available
+/// Test that demonstrates formal verification capabilities - Z3 REQUIRED
 #[test]
 fn test_z3_formal_verification_capabilities() {
     println!("🎯 Testing formal verification capabilities...");
 
-    // Check if Z3 is available - if not, skip this test gracefully but log the requirement
+    // Z3 is MANDATORY - no graceful degradation
     if !is_z3_available() {
-        println!("⚠️ SKIPPING: Z3 formal verification capabilities test");
-        println!("   Reason: Z3 is not available");
-        println!("   To enable: Install Z3 or compile with --features z3-verification");
-        return; // Skip test instead of failing for capabilities demo
+        panic!("❌ CRITICAL: Z3 is MANDATORY for formal verification capabilities test. Install Z3 or compile with --features z3-verification");
     }
 
     println!("✅ Z3 available - demonstrating formal verification capabilities");

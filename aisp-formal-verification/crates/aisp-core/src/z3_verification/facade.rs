@@ -24,15 +24,17 @@ pub struct FacadeStats {
 }
 
 impl Z3VerificationFacade {
-    /// Create new Z3 facade requiring genuine verification
+    /// Create new Z3 facade - REQUIRES Z3 availability (no graceful degradation)
     pub fn new() -> AispResult<Self> {
+        // STRICT REQUIREMENT: Z3 must be available
+        #[cfg(not(feature = "z3-verification"))]
+        compile_error!("❌ CRITICAL: Z3 verification is MANDATORY - compile with --features z3-verification");
+        
         let smt_interface = SmtInterface::new();
         
         if !smt_interface.is_z3_available() {
-            return Err(AispError::ValidationError {
-                message: "Z3 verification facade requires Z3 to be available. \
-                         Compile with --features z3-verification or install Z3 library.".to_string(),
-            });
+            panic!("❌ FATAL: Z3 is MANDATORY for AISP formal verification but is not available. \
+                   Install Z3 library and ensure proper environment setup.");
         }
         
         Ok(Self {
@@ -46,18 +48,8 @@ impl Z3VerificationFacade {
         })
     }
     
-    /// Create disabled facade for testing without Z3
-    pub fn new_disabled() -> Self {
-        Self {
-            smt_interface: SmtInterface::new_disabled(),
-            verification_stats: FacadeStats {
-                document_verifications: 0,
-                total_properties_checked: 0,
-                successful_verifications: 0,
-                failed_verifications: 0,
-            },
-        }
-    }
+    /// REMOVED: No disabled facade - Z3 is mandatory
+    // pub fn new_disabled() -> Self { REMOVED - graceful degradation not supported }
     
     /// Verify AISP document with comprehensive analysis
     pub fn verify_document(
@@ -221,7 +213,7 @@ impl Z3VerificationFacade {
 
 impl Default for Z3VerificationFacade {
     fn default() -> Self {
-        Self::new().unwrap_or_else(|_| Self::new_disabled())
+        Self::new().expect("❌ FATAL: Z3 is MANDATORY for default facade creation")
     }
 }
 
