@@ -563,16 +563,18 @@ impl TypeSystemAnalyzer {
         for block in &document.blocks {
             match block {
                 AispBlock::Types(types_block) => {
-                    for type_def in &types_block.definitions {
-                        if let Err(e) = self.validate_type_definition(type_def) {
+                    for (type_name, type_def) in &types_block.definitions {
+                        if let Err(e) = self.validate_type_definition((type_name, type_def)) {
                             type_errors.push(format!("Type definition error: {}", e));
                         }
                     }
                 }
                 AispBlock::Functions(functions_block) => {
-                    for function in &functions_block.functions {
-                        if let Some(inferred_type) = self.infer_function_type(function) {
-                            inferred_types.insert(function.clone(), inferred_type);
+                    // Simplified function type inference
+                    let function_count = format!("{:?}", functions_block).matches("≜").count();
+                    for i in 0..function_count {
+                        if let Some(inferred_type) = self.infer_function_type() {
+                            inferred_types.insert(format!("function_{}", i), inferred_type);
                         }
                     }
                 }
@@ -590,9 +592,9 @@ impl TypeSystemAnalyzer {
         })
     }
 
-    fn validate_type_definition(&self, type_def: &str) -> AispResult<()> {
+    fn validate_type_definition(&self, type_def: (&String, &crate::ast::canonical::TypeDefinition)) -> AispResult<()> {
         // Simplified type validation
-        if type_def.contains("Any") {
+        if type_def.0.contains("Any") || format!("{:?}", type_def.1).contains("Any") {
             return Err(AispError::ValidationError {
                 message: "Unsafe Any type usage detected".to_string(),
             });
@@ -600,7 +602,7 @@ impl TypeSystemAnalyzer {
         Ok(())
     }
 
-    fn infer_function_type(&self, _function: &str) -> Option<String> {
+    fn infer_function_type(&self) -> Option<String> {
         // Simplified type inference
         Some("Function".to_string())
     }
@@ -722,23 +724,23 @@ impl DeceptionDetector {
     pub fn analyze_for_deception(&mut self, document: &AispDocument) -> AispResult<DeceptionAnalysisResult> {
         let mut placeholder_patterns = Vec::new();
         let mut behavioral_anomalies = Vec::new();
-        let mut deception_risk = 0.0;
+        let mut deception_risk = 0.0f64;
 
         // Analyze each block for deception patterns
         for block in &document.blocks {
             match block {
                 AispBlock::Functions(functions_block) => {
-                    for function in &functions_block.functions {
-                        for pattern in &self.placeholder_patterns {
-                            if self.matches_pattern(function, &pattern.detection_regex) {
-                                placeholder_patterns.push(pattern.pattern_name.clone());
-                                deception_risk += match pattern.risk_level {
-                                    RiskLevel::Low => 0.1,
-                                    RiskLevel::Medium => 0.3,
-                                    RiskLevel::High => 0.6,
-                                    RiskLevel::Critical => 0.9,
-                                };
-                            }
+                    // Analyze function content for deception patterns
+                    let functions_text = format!("{:?}", functions_block);
+                    for pattern in &self.placeholder_patterns {
+                        if self.matches_pattern(&functions_text, &pattern.detection_regex) {
+                            placeholder_patterns.push(pattern.pattern_name.clone());
+                            deception_risk += match pattern.risk_level {
+                                RiskLevel::Low => 0.1,
+                                RiskLevel::Medium => 0.3,
+                                RiskLevel::High => 0.6,
+                                RiskLevel::Critical => 0.9,
+                            };
                         }
                     }
                 }

@@ -116,6 +116,10 @@ impl DeepVerificationResult {
             .map(|f| format!("{}: {}", f.component, f.reason))
             .collect()
     }
+    
+    pub fn to_result(&self) -> Self {
+        self.clone()
+    }
 
     // Additional compatibility fields
     pub fn type_analysis(&self) -> MockTypeAnalysis {

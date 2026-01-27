@@ -2,7 +2,7 @@
 // Part of ADR-023: Deep Verification Architecture for Semantic Security
 // Integrates multiple verification layers for comprehensive validation
 
-use crate::parser::robust_parser::{AispDocument, AispBlock};
+use crate::ast::canonical::{CanonicalAispDocument as AispDocument, CanonicalAispBlock as AispBlock, *};
 use crate::semantic::deep_verifier::{
     DeepSemanticVerifier, DeepVerificationResult, TypeAnalysisResult, 
     LogicAnalysisResult, SecurityAssessment, ThreatLevel
@@ -374,7 +374,7 @@ impl CrossValidationChecker {
         }
 
         // Check for security assessment disparities
-        let semantic_threat_level_score = match semantic_results.security_assessment.threat_level {
+        let semantic_threat_level_score: f64 = match semantic_results.security_assessment.threat_level {
             ThreatLevel::Minimal => 1.0,
             ThreatLevel::Low => 0.8,
             ThreatLevel::Medium => 0.6,
@@ -390,7 +390,7 @@ impl CrossValidationChecker {
             crate::semantic::behavioral_verifier::ThreatLevel::Critical => 0.0,
         };
 
-        if (semantic_threat_level_score - behavioral_threat_level_score).abs() > 0.4 {
+        if (semantic_threat_level_score - behavioral_threat_level_score).abs() > 0.4_f64 {
             conflicts.push(VerificationConflict {
                 conflict_id: "security_assessment_disparity_004".to_string(),
                 conflict_type: ConflictType::SecurityAssessmentDisparity,
