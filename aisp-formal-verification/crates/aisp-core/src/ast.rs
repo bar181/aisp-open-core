@@ -3,11 +3,26 @@
 //! Provides type-safe representations of all AISP constructs with
 //! zero-copy parsing where possible.
 
+pub mod canonical;
+
 use std::collections::HashMap;
 use std::fmt;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+
+// Re-export canonical types as primary interface for new development
+pub use canonical::{
+    CanonicalAispDocument,
+    CanonicalAispBlock, 
+    MetaBlock as CanonicalMetaBlock,
+    TypesBlock as CanonicalTypesBlock,
+    RulesBlock as CanonicalRulesBlock,
+    FunctionsBlock as CanonicalFunctionsBlock,
+    EvidenceBlock as CanonicalEvidenceBlock,
+};
+
+// Legacy AST types - maintained for backward compatibility during migration
 
 /// Complete AISP document AST
 #[derive(Debug, Clone, PartialEq)]
