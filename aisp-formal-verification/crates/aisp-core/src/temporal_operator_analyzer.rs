@@ -196,7 +196,7 @@ impl TemporalOperatorAnalyzer {
             let operators = self.extract_operators_from_text(
                 &rule_text,
                 OperatorContext::Rule(rule_id.clone()),
-                &rule.span.unwrap_or_default(),
+                &rule.span.clone().unwrap_or_default(),
             );
 
             // Check for malformed operator usage
@@ -226,7 +226,7 @@ impl TemporalOperatorAnalyzer {
             let operators = self.extract_operators_from_text(
                 &function_text,
                 OperatorContext::Function(function_name.clone()),
-                &function.span.unwrap_or_default(),
+                &function.span.clone().unwrap_or_default(),
             );
 
             // Warn about complex temporal expressions in functions
@@ -255,7 +255,7 @@ impl TemporalOperatorAnalyzer {
                 let operators = self.extract_operators_from_text(
                     &constraint_text,
                     OperatorContext::MetaConstraint(key.clone()),
-                    &entry.span.unwrap_or_default(),
+                    &entry.span.clone().unwrap_or_default(),
                 );
 
                 self.detected_operators.extend(operators);
@@ -275,7 +275,7 @@ impl TemporalOperatorAnalyzer {
         let operators = self.extract_operators_from_text(
             &value_text,
             OperatorContext::Evidence("evidence".to_string()),
-            &evidence_block.span.unwrap_or_default(),
+            &evidence_block.span.clone().unwrap_or_default(),
         );
 
         self.detected_operators.extend(operators);
