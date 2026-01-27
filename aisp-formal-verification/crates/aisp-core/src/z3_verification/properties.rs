@@ -347,8 +347,8 @@ impl PropertyVerifier {
         // Configure solver for AISP verification
         solver.set_params(&ctx, &[
             ("timeout", &self.config.query_timeout_ms.to_string()),
-            ("model", "true"),
-            ("proof", "true"),
+            ("model", &"true".to_string()),
+            ("proof", &"true".to_string()),
         ]);
 
         // Declare AISP-specific sorts

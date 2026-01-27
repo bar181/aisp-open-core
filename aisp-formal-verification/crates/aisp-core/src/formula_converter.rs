@@ -3,7 +3,7 @@
 //! This module handles conversion of AISP logical expressions
 //! to formal mathematical formulas for verification.
 
-use crate::ast::*;
+use crate::ast::canonical::*;
 use crate::error::*;
 use crate::property_types::{FormulaStructure, PropertyFormula, Term, AtomicFormula, PropertyComplexity, PropertyType};
 use crate::property_types::Quantifier as PropertyQuantifier;

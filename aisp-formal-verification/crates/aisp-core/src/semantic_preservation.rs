@@ -21,7 +21,7 @@
 //! 4. **Optimization Passes**: Prove optimizations preserve behavioral equivalence
 
 use crate::{
-    ast::*,
+    ast::canonical::*,
     error::{AispError, AispResult},
     formal_semantics::*,
     soundness_proofs::*,

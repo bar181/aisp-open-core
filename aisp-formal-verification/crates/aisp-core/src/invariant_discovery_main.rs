@@ -4,7 +4,7 @@
 //! orchestrating the various components (analyzer, formulas, exporters).
 
 use crate::{
-    ast::{AispDocument, AispBlock, DocumentHeader, DocumentMetadata, TypesBlock, TypeExpression, BasicType},
+    ast::canonical::{CanonicalAispDocument as AispDocument, CanonicalAispBlock as AispBlock, DocumentHeader, DocumentMetadata, TypesBlock, TypeExpression, BasicType},
     error::AispResult,
     invariant_types::{DiscoveredInvariant, InvariantDiscoveryConfig, DiscoveryStats},
     invariant_analyzer::InvariantAnalyzer,
