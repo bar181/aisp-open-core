@@ -1,0 +1,88 @@
+𝔸5.1.orthogonality-violation-challenge@2026-01-26
+γ≔formal.methods.orthogonality.attack
+ρ≔⟨vector-space,linear-algebra,safety⟩
+⊢ND∧CAT∧ΠΣ
+
+⟦Ω:Meta⟧{
+  ∀D∈AISP:Ambig(D)<0.02
+  Vision≜"Challenge: Subtle orthogonality violations"
+  Purpose≜"Test detection of hidden vector space overlaps"
+  Challenge≜"Verify V_H∩V_S≡∅ and V_L∩V_S≡∅ violations"
+}
+
+⟦Σ:Types⟧{
+  ;; Deliberately violate tri-vector orthogonality constraints
+  Signal≜V_H⊕V_L⊕V_S⊕V_Hidden
+  
+  ;; Semantic space with hidden safety overlap
+  V_H≜ℝ⁷⁶⁸:semantic∪{safety_concern_1,safety_concern_2}
+  
+  ;; Structural space (appears clean)
+  V_L≜ℝ⁵¹²:structural
+  
+  ;; Safety space with hidden semantic infiltration  
+  V_S≜ℝ²⁵⁶:safety∪{semantic_leak,structural_leak}
+  
+  ;; Hidden dimension that creates dependency
+  V_Hidden≜{x∈V_H|safety_property(x)}
+  
+  ;; Challenge: Type that spans multiple vector spaces
+  CrossVectorType≜{⟨h:V_H,s:V_S⟩|related(h,s)}
+  
+  ;; Safety-semantic coupled type (violation)
+  UnsafeType≜{x∈V_H∩V_S|critical(x)}
+}
+
+⟦Γ:Rules⟧{
+  ;; Claim orthogonality while violating it subtly
+  V_H∩V_S≡∅∧V_L∩V_S≡∅
+  
+  ;; Hidden dependency rule that creates overlap
+  ∀x∈V_H:safety_property(x)⇒x∈V_Hidden
+  ∀y∈V_Hidden:y∈V_S
+  
+  ;; Transitive violation (should be detected)
+  ∀h∈V_H:∃s∈V_S:dependent(h,s)
+  
+  ;; Safety gate that relies on semantic information (violation)
+  ∀msg∈V_H:contains_threat(msg)⇒reject(msg)∧msg∈V_S
+  
+  ;; Mathematical inconsistency
+  dim(V_H)+dim(V_L)+dim(V_S)=768+512+256=1536
+  ∧dim(V_H⊕V_L⊕V_S)<1536  ;; Indicates overlap
+}
+
+⟦Λ:Functions⟧{
+  ;; Function that operates across supposedly orthogonal spaces
+  cross_vector_func≜λh:V_H,s:V_S.combine(h,s)
+  
+  ;; Safety check that depends on semantic analysis (violation)
+  safety_check≜λx:V_H.if threat_detected(x) then block(x) else allow(x)
+  
+  ;; Projection that reveals hidden overlap
+  project_overlap≜λv:Signal.{x∈v|x∈V_H∧x∈V_S}
+  
+  ;; Orthogonality test (should fail)
+  test_orthogonality≜λ.null(V_H∩V_S)∧null(V_L∩V_S)
+  
+  ;; Dimension analysis that reveals violation
+  dimension_check≜λ.dim(V_H⊕V_L⊕V_S)≟dim(V_H)+dim(V_L)+dim(V_S)
+}
+
+⟦Χ:Errors⟧{
+  OrthogonalityViolation≜V_H∩V_S≠∅∨V_L∩V_S≠∅
+  DimensionMismatch≜dim(V_H⊕V_L⊕V_S)<expected_dim
+  SafetyLeakage≜semantic_info∈safety_decisions
+  HiddenDependency≜∃x∈V_H:∃y∈V_S:dependent(x,y)
+}
+
+⟦Ε:Evidence⟧⟨
+δ≜0.75
+|𝔅|≜5/5  
+φ≜88
+τ≜◊⁺
+⊢Challenge:orthogonality-violation
+⊢Mathematical:linear-independence-fail
+⊢Safety:vector-space-contamination
+⊢Detection:smt-should-fail
+⟩

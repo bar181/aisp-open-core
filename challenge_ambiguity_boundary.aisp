@@ -1,0 +1,84 @@
+𝔸5.1.ambiguity-boundary-challenge@2026-01-26
+γ≔formal.methods.ambiguity.attack
+ρ≔⟨boundary,precision,edge-case⟩
+⊢ND∧CAT∧ΠΣ
+
+⟦Ω:Meta⟧{
+  ∀D∈AISP:Ambig(D)<0.02
+  Vision≜"Challenge: Precisely at 0.019999 ambiguity boundary"
+  Purpose≜"Test edge case where ambiguity barely meets spec"
+  Challenge≜"Verify calculation precision at threshold boundary"
+}
+
+⟦Σ:Types⟧{
+  ;; Deliberately ambiguous type that should trigger boundary analysis
+  AmbiguousType≜𝕊|ℕ|𝔹
+  
+  ;; Multiple valid interpretations for parsing challenge
+  FlexiType≜⟨a:AmbiguousType,b:AmbiguousType,c:AmbiguousType⟩
+  
+  ;; Edge case: Type that could be interpreted multiple ways
+  EdgeType≜{x:ℕ|x∈[0,1]}∪{x:𝔹|x∈{⊤,⊥}}
+  
+  ;; Challenge the tri-vector decomposition
+  Signal≜V_H⊕V_L⊕V_S
+  V_H≜ℝ⁷⁶⁸:semantic
+  V_L≜ℝ⁵¹²:structural
+  V_S≜ℝ²⁵⁶:safety
+  
+  ;; Precision challenge for mathematical verification
+  PrecisionNum≜{x:ℝ|0.019999≤x≤0.020001}
+}
+
+⟦Γ:Rules⟧{
+  ;; Rule that creates parsing ambiguity right at threshold
+  ∀x:AmbiguousType:(x∈𝕊∨x∈ℕ∨x∈𝔹)
+  
+  ;; Mathematical precision challenge
+  ∀p:PrecisionNum:p<0.02
+  
+  ;; Orthogonality constraint that might be violated subtly
+  V_H∩V_S≡∅∧V_L∩V_S≡∅
+  
+  ;; Edge case rule with multiple valid interpretations
+  ∀f:FlexiType:∃!interpretation:valid(f,interpretation)
+  
+  ;; Challenge: Pipeline constraint at boundary conditions
+  ∀n:ℕ:P_aisp(n)>P_prose(n)
+}
+
+⟦Λ:Functions⟧{
+  ;; Ambiguity calculation under challenge
+  Ambig≜λD.1-|Parse_u(D)|/|Parse_t(D)|
+  
+  ;; Function with deliberate ambiguity
+  ambiguous_func≜λx:AmbiguousType.(
+    x∈𝕊→len(x)|
+    x∈ℕ→x+1|
+    x∈𝔹→if x then 1 else 0
+  )
+  
+  ;; Precision boundary test
+  boundary_test≜λε.if ε<0.02 then "pass" else "fail"
+  
+  ;; Challenge mathematical verification
+  precision_challenge≜λx.x≈0.019999999
+}
+
+⟦Χ:Errors⟧{
+  ;; Error conditions at boundary
+  AmbiguityViolation≜Ambig(D)≥0.02
+  PrecisionError≜|calculated-expected|>1e-10
+  OrthogonalityViolation≜V_H∩V_S≠∅
+}
+
+⟦Ε:Evidence⟧⟨
+δ≜0.019999
+|𝔅|≜5/5
+φ≜97
+τ≜◊⁺
+⊢Challenge:ambiguity-boundary
+⊢Precision:floating-point-edge
+⊢Mathematical:orthogonality-stress
+⊢Verification:smt-precision-test
+⟩

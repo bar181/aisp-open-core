@@ -1,0 +1,52 @@
+𝔸5.1.formal-methods-challenge@2026-01-26
+γ≔formal.methods.boundary.test
+ρ≔⟨ambiguity,precision,edge-case⟩
+⟦Ω:Meta⟧{
+  ∀D∈AISP:Ambig(D)<0.02
+  Vision≜"Challenge: Precisely at 0.019999 ambiguity boundary"
+  Purpose≜"Test edge case where ambiguity barely meets spec"
+  Challenge≜"Verify calculation precision at threshold boundary"
+}
+
+⟦Σ:Types⟧{
+  AmbiguousType≜𝕊|ℕ|𝔹
+  FlexiType≜⟨a:AmbiguousType,b:AmbiguousType⟩
+  EdgeType≜{x:ℕ|x∈[0,1]}∪{x:𝔹|x∈{⊤,⊥}}
+  Signal≜V_H⊕V_L⊕V_S
+  V_H≜ℝ⁷⁶⁸:semantic
+  V_L≜ℝ⁵¹²:structural  
+  V_S≜ℝ²⁵⁶:safety
+  PrecisionNum≜{x:ℝ|0.019999≤x≤0.020001}
+}
+
+⟦Γ:Rules⟧{
+  ∀x:AmbiguousType:(x∈𝕊∨x∈ℕ∨x∈𝔹)
+  ∀p:PrecisionNum:p<0.02
+  V_H∩V_S≡∅∧V_L∩V_S≡∅
+  ∀f:FlexiType:∃!interpretation:valid(f,interpretation)
+  ∀n:ℕ:P_aisp(n)>P_prose(n)
+}
+
+⟦Λ:Functions⟧{
+  Ambig≜λD.1-|Parse_u(D)|/|Parse_t(D)|
+  ambiguous_func≜λx:AmbiguousType.(x∈𝕊→len(x)|x∈ℕ→x+1|x∈𝔹→if x then 1 else 0)
+  boundary_test≜λε.if ε<0.02 then "pass" else "fail"
+  precision_challenge≜λx.x≈0.019999999
+}
+
+⟦Χ:Errors⟧{
+  AmbiguityViolation≜Ambig(D)≥0.02
+  PrecisionError≜|calculated-expected|>1e-10
+  OrthogonalityViolation≜V_H∩V_S≠∅
+}
+
+⟦Ε:Evidence⟧⟨
+δ≜0.019999
+|𝔅|≜5/5
+φ≜97
+τ≜◊⁺
+⊢Challenge:ambiguity-boundary
+⊢Precision:floating-point-edge
+⊢Mathematical:orthogonality-stress
+⊢Verification:smt-precision-test
+⟩
