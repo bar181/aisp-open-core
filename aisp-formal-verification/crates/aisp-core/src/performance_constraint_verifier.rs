@@ -4,7 +4,7 @@
 //! including timing constraints, throughput requirements, and resource bounds verification.
 
 use crate::{
-    ast::AispDocument,
+    ast::canonical::CanonicalAispDocument as AispDocument,
     error::{AispError, AispResult},
     concurrent_behavior_verifier::ConcurrentProcess,
     protocol_state_machine::ProtocolStateMachine,
@@ -2434,7 +2434,7 @@ impl Default for PerformanceConstraintVerifier {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::*;
+    use crate::ast::canonical::*;
 
     fn create_test_document() -> AispDocument {
         AispDocument {

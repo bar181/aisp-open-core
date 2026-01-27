@@ -3,7 +3,7 @@
 //! This module implements explicit-state model checking for temporal logic
 //! properties in AISP documents, supporting LTL, CTL, and CTL*.
 
-use crate::ast::*;
+use crate::ast::canonical::*;
 use crate::error::*;
 use crate::property_extractor::*;
 use crate::temporal_new::*;

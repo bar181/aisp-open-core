@@ -38,7 +38,7 @@ pub use crate::satisfiability_checker::*;
 mod tests {
     use super::*;
     use crate::{
-        ast::{AispDocument, DocumentHeader, DocumentMetadata, AispBlock, TypesBlock, TypeExpression, BasicType},
+        ast::canonical::{CanonicalAispDocument as AispDocument, DocumentHeader, DocumentMetadata, CanonicalAispBlock as AispBlock, TypesBlock, TypeExpression, BasicType, TypeDefinition, Span},
         parser_new::AispParser,
     };
     use std::collections::HashMap;
@@ -165,7 +165,7 @@ mod tests {
         types.insert("Value".to_string(), TypeDefinition {
             name: "Value".to_string(),
             type_expr: TypeExpression::Basic(BasicType::Natural),
-            span: Span::default(),
+            span: Some(Span::new(0, 0, 1, 1)),
         });
 
         let document = AispDocument {
@@ -182,10 +182,10 @@ mod tests {
             blocks: vec![
                 AispBlock::Types(TypesBlock {
                     definitions: types,
-                    span: Span::default(),
+                    span: Some(Span::new(0, 0, 1, 1)),
                 }),
             ],
-            span: Span::default(),
+            span: Some(Span::new(0, 0, 1, 1)),
         };
 
         // Quick analysis
@@ -210,7 +210,7 @@ mod tests {
         types.insert("Counter".to_string(), TypeDefinition {
             name: "Counter".to_string(),
             type_expr: TypeExpression::Basic(BasicType::Natural),
-            span: Span::default(),
+            span: Some(Span::new(0, 0, 1, 1)),
         });
 
         let document = AispDocument {
@@ -227,10 +227,10 @@ mod tests {
             blocks: vec![
                 AispBlock::Types(TypesBlock {
                     definitions: types,
-                    span: Span::default(),
+                    span: Some(Span::new(0, 0, 1, 1)),
                 }),
             ],
-            span: Span::default(),
+            span: Some(Span::new(0, 0, 1, 1)),
         };
 
         let mut discovery = InvariantDiscovery::new();

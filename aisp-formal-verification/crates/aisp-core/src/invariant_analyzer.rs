@@ -4,7 +4,11 @@
 //! mathematical invariants from AISP document structures.
 
 use crate::{
-    ast::{AispDocument, AispBlock, TypeExpression, BasicType, DocumentHeader, DocumentMetadata, TypesBlock},
+    ast::canonical::{
+        CanonicalAispDocument as AispDocument,
+        CanonicalAispBlock as AispBlock,
+        TypeExpression, BasicType, DocumentHeader, DocumentMetadata, TypesBlock
+    },
     error::AispResult,
     invariant_types::{
         DiscoveredInvariant, InvariantType, InvariantEvidence, EvidenceType,
@@ -97,8 +101,20 @@ impl InvariantAnalyzer {
             TypeExpression::Basic(BasicType::Natural) => {
                 self.add_natural_type_invariant(type_name)?;
             }
-            TypeExpression::Enumeration(variants) => {
-                self.add_enumeration_invariant(type_name, variants)?;
+            TypeExpression::Union(variants) => {
+                // Extract variant names for enumeration-like unions
+                let variant_names: Vec<String> = variants.iter()
+                    .filter_map(|v| {
+                        if let TypeExpression::Basic(BasicType::Custom(name)) = v {
+                            Some(name.clone())
+                        } else {
+                            None
+                        }
+                    })
+                    .collect();
+                if !variant_names.is_empty() {
+                    self.add_enumeration_invariant(type_name, &variant_names)?;
+                }
             }
             _ => {
                 if self.config.enable_structural_analysis {
@@ -216,8 +232,11 @@ impl InvariantAnalyzer {
 mod tests {
     use super::*;
     use crate::{
-        ast::{AispDocument, DocumentHeader, AispBlock, TypesBlock, TypeDefinition, 
-              TypeExpression, BasicType},
+        ast::canonical::{
+            CanonicalAispDocument as AispDocument,
+            DocumentHeader, CanonicalAispBlock as AispBlock, TypesBlock, TypeDefinition, 
+            TypeExpression, BasicType, Span, DocumentMetadata
+        },
         invariant_types::InvariantDiscoveryConfig,
     };
     use std::{collections::HashMap, time::Duration};

@@ -3,7 +3,7 @@
 //! This module handles parsing the document header (𝔸5.1.name@date) and
 //! document metadata (γ and ρ declarations).
 
-use crate::ast::{DocumentHeader, DocumentMetadata};
+use crate::ast::canonical::{DocumentHeader, DocumentMetadata, HeaderMetadata};
 use crate::error::*;
 use crate::lexer::AispLexer;
 use crate::token_parser::TokenParser;
@@ -53,7 +53,11 @@ impl HeaderParser {
             version,
             name,
             date,
-            metadata,
+            metadata: metadata.map(|m| HeaderMetadata {
+                author: Some(m),
+                description: None,
+                tags: Vec::new(),
+            }),
         })
     }
 
@@ -123,7 +127,7 @@ mod tests {
         assert_eq!(header.version, "5.1");
         assert_eq!(header.name, "test");
         assert_eq!(header.date, "2026-01-25");
-        assert_eq!(header.metadata, None);
+        assert!(header.metadata.is_none());
     }
 
     #[test]
@@ -134,7 +138,8 @@ mod tests {
         assert_eq!(header.version, "5.1");
         assert_eq!(header.name, "test");
         assert_eq!(header.date, "2026-01-25");
-        assert_eq!(header.metadata, Some("meta".to_string()));
+        assert!(header.metadata.is_some());
+        assert_eq!(header.metadata.as_ref().unwrap().author, Some("meta".to_string()));
     }
 
     #[test]

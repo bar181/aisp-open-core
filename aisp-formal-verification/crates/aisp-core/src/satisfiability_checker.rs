@@ -4,7 +4,7 @@
 //! discovered from AISP documents, including SMT-based solving and model generation.
 
 use crate::{
-    ast::AispDocument,
+    ast::canonical::CanonicalAispDocument as AispDocument,
     error::{AispError, AispResult},
     invariant_types::DiscoveredInvariant,
     property_types::{PropertyFormula, FormulaStructure, AtomicFormula, Term},

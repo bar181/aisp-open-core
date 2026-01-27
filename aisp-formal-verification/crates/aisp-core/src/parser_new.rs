@@ -3,7 +3,7 @@
 //! This module orchestrates the parsing of complete AISP documents
 //! using focused, SRP-compliant parser modules.
 
-use crate::ast::*;
+use crate::ast::canonical::*;
 use crate::error::*;
 use crate::lexer::AispLexer;
 use crate::header_parser::HeaderParser;

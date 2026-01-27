@@ -3,7 +3,7 @@
 //! This module handles detection, validation, and analysis of temporal operators
 //! including Linear Temporal Logic (LTL) and Computation Tree Logic (CTL) operators.
 
-use crate::ast::*;
+use crate::ast::canonical::*;
 use crate::error::*;
 use std::collections::HashMap;
 

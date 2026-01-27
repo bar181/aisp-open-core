@@ -3,7 +3,7 @@
 //! This module handles constraint analysis, satisfaction checking,
 //! and conflict resolution for relational logic constraints.
 
-use crate::ast::*;
+use crate::ast::canonical::*;
 use crate::conflict_types::ConflictSeverity;
 use std::collections::HashMap;
 

@@ -3,7 +3,7 @@
 //! This module handles parsing Meta blocks (⟦Ω:Meta⟧) which can contain
 //! both key-value pairs and logical constraints.
 
-use crate::ast::{MetaBlock, MetaEntry, MetaValue, Span};
+use crate::ast::canonical::{MetaBlock, MetaEntry, MetaValue, Span};
 use crate::error::*;
 use crate::lexer::AispLexer;
 use crate::logic_parser::LogicParser;
@@ -125,7 +125,7 @@ impl MetaParser {
 
 // Import logic parser module - we'll create this next
 mod logic_parser {
-    use crate::ast::LogicalExpression;
+    use crate::ast::canonical::LogicalExpression;
     use crate::error::*;
     use crate::lexer::AispLexer;
 

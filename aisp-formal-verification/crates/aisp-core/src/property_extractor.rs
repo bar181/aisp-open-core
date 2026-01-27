@@ -3,7 +3,10 @@
 //! This module coordinates the extraction of formal properties from
 //! AISP documents using the various specialized extractors.
 
-use crate::ast::*;
+use crate::ast::canonical::*;
+// Type alias for backward compatibility
+pub use CanonicalAispDocument as AispDocument;
+pub use CanonicalAispBlock as AispBlock;
 use crate::error::*;
 use crate::property_types::*;
 use crate::formula_converter::FormulaConverter;
@@ -278,10 +281,10 @@ impl Default for PropertyExtractor {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::Span;
+    use crate::ast::canonical::Span;
 
     fn create_test_span() -> Span {
-        Span::new(1, 1, 1, 10)
+        Span::new(1, 10, 1, 10)
     }
 
     #[test]

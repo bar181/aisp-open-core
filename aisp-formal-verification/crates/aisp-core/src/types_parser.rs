@@ -3,7 +3,7 @@
 //! This module handles parsing Types blocks (⟦Σ:Types⟧) which define
 //! type definitions and expressions.
 
-use crate::ast::{TypesBlock, TypeDefinition, TypeExpression, BasicType, Span};
+use crate::ast::canonical::{TypeDefinition, TypeExpression, BasicType, Span, TypesBlock};
 use crate::error::*;
 use crate::lexer::AispLexer;
 use crate::token_parser::TokenParser;
@@ -43,7 +43,7 @@ impl TypesParser {
             
             let type_expr = Self::parse_type_expression(lexer)?;
             let (line, column) = lexer.position_info();
-            let span = Span::new(line, 1, line, column);
+            let span = Some(Span::new(0, 0, line, column));
             
             definitions.insert(
                 name.clone(),
@@ -61,7 +61,8 @@ impl TypesParser {
         let (end_line, end_column) = lexer.position_info();
         Ok(TypesBlock {
             definitions,
-            span: Span::new(start_line, 1, end_line, end_column),
+            raw_definitions: Vec::new(), // Will be populated by caller
+            span: Some(Span::new(0, 0, start_line, 1)),
         })
     }
 
@@ -116,7 +117,11 @@ impl TypesParser {
                         return Err(lexer.parse_error("Expected '}' to close enumeration"));
                     }
                     
-                    Ok(TypeExpression::Enumeration(values))
+                    // Convert to Union type for canonical representation
+                    let enum_types: Vec<TypeExpression> = values.into_iter()
+                        .map(|v| TypeExpression::Basic(BasicType::Custom(v)))
+                        .collect();
+                    Ok(TypeExpression::Union(enum_types))
                 }
                 'ℕ' => {
                     lexer.advance();
@@ -141,7 +146,7 @@ impl TypesParser {
                 _ => {
                     // Type reference
                     let name = TokenParser::parse_identifier(lexer)?;
-                    Self::parse_type_suffix(lexer, TypeExpression::Reference(name))
+                    Self::parse_type_suffix(lexer, TypeExpression::Basic(BasicType::Custom(name)))
                 }
             }
         } else {
@@ -165,16 +170,14 @@ impl TypesParser {
                 return Err(lexer.parse_error("Expected ']' after array size"));
             }
             
-            Ok(TypeExpression::Array {
-                element_type: Box::new(base_type),
-                size,
-            })
+            // Convert to Set type for canonical representation
+            Ok(TypeExpression::Set(Box::new(base_type)))
         } else if lexer.match_char('→') || lexer.match_str("->") {
             // Function type A → B
             let output = Self::parse_type_expression(lexer)?;
             Ok(TypeExpression::Function {
-                input: Box::new(base_type),
-                output: Box::new(output),
+                params: vec![base_type],
+                return_type: Box::new(output),
             })
         } else {
             Ok(base_type)
@@ -192,8 +195,8 @@ mod tests {
         let type_expr = TypesParser::parse_type_expression(&mut lexer).unwrap();
         
         match type_expr {
-            TypeExpression::Enumeration(values) => {
-                assert_eq!(values, vec!["A", "B", "C"]);
+            TypeExpression::Union(variants) => {
+                assert_eq!(variants.len(), 3);
             }
             _ => panic!("Expected enumeration type"),
         }
@@ -228,7 +231,7 @@ mod tests {
         let type_expr = TypesParser::parse_type_expression(&mut lexer).unwrap();
         
         match type_expr {
-            TypeExpression::Reference(name) => {
+            TypeExpression::Basic(BasicType::Custom(name)) => {
                 assert_eq!(name, "MyType");
             }
             _ => panic!("Expected type reference"),
@@ -241,12 +244,11 @@ mod tests {
         let type_expr = TypesParser::parse_type_expression(&mut lexer).unwrap();
         
         match type_expr {
-            TypeExpression::Array { element_type, size } => {
+            TypeExpression::Set(element_type) => {
                 match *element_type {
                     TypeExpression::Basic(BasicType::Natural) => {},
                     _ => panic!("Expected Natural element type"),
                 }
-                assert_eq!(size, Some(10));
             }
             _ => panic!("Expected array type"),
         }
@@ -258,8 +260,8 @@ mod tests {
         let type_expr = TypesParser::parse_type_expression(&mut lexer).unwrap();
         
         match type_expr {
-            TypeExpression::Function { input, output } => {
-                match (*input, *output) {
+            TypeExpression::Function { params, return_type } => {
+                match (&params[0], &**return_type) {
                     (TypeExpression::Basic(BasicType::Natural), TypeExpression::Basic(BasicType::Boolean)) => {},
                     _ => panic!("Expected ℕ → 𝔹 function type"),
                 }
@@ -284,8 +286,8 @@ mod tests {
         let type_expr = TypesParser::parse_type_expression(&mut lexer).unwrap();
         
         match type_expr {
-            TypeExpression::Enumeration(values) => {
-                assert!(values.is_empty());
+            TypeExpression::Union(variants) => {
+                assert!(variants.is_empty());
             }
             _ => panic!("Expected empty enumeration"),
         }

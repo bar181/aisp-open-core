@@ -4,7 +4,7 @@
 //! including race condition detection, deadlock analysis, and synchronization verification.
 
 use crate::{
-    ast::AispDocument,
+    ast::canonical::CanonicalAispDocument as AispDocument,
     error::{AispError, AispResult},
     property_types::{PropertyFormula, FormulaStructure, AtomicFormula, Term},
     protocol_state_machine::{ProtocolStateMachine, StateTransition, TransitionTrigger},

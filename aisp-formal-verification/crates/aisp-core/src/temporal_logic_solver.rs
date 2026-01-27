@@ -5,7 +5,7 @@
 //! formula evaluation, and constraint solving.
 
 use crate::error::*;
-use crate::ast::Span;
+use crate::ast::canonical::Span;
 use crate::temporal_operator_analyzer::{TemporalOperator, OperatorInstance};
 use crate::temporal_pattern_detector::{TemporalPattern, PatternType};
 use std::collections::{HashMap, HashSet};

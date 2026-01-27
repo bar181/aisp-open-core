@@ -14,6 +14,10 @@ pub use self::blocks::*;
 pub use self::document::*;
 pub use self::conversions::*;
 
+// Explicit public re-exports for external visibility
+pub use self::document::CanonicalAispDocument;
+pub use self::blocks::CanonicalAispBlock;
+
 // Module declarations
 pub mod types;
 pub mod blocks;

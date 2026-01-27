@@ -3,7 +3,7 @@
 //! This module handles parsing Evidence blocks (⟦Ε⟧) which contain
 //! quality metrics and tier information.
 
-use crate::ast::{EvidenceBlock, Span};
+use crate::ast::canonical::{EvidenceBlock, Span};
 use crate::error::*;
 use crate::lexer::AispLexer;
 use crate::token_parser::TokenParser;
@@ -58,10 +58,11 @@ impl EvidenceParser {
         let (end_line, end_column) = lexer.position_info();
         Ok(EvidenceBlock {
             delta,
-            phi,
+            phi: phi.map(|p| p as u64),  // Convert to u64 as expected by canonical
             tau,
             metrics,
-            span: Span::new(start_line, 1, end_line, end_column),
+            raw_evidence: Vec::new(),  // Will be populated by caller
+            span: Some(Span::new(0, 0, start_line, 1)),
         })
     }
 }

@@ -3,7 +3,7 @@
 //! This module implements rigorous relational constraint analysis and validation
 //! for formal verification of AISP documents, focusing on soundness and completeness.
 
-use crate::ast::*;
+use crate::ast::canonical::*;
 use crate::error::*;
 use crate::constraint_solver::{ConstraintSolver, ConstraintAnalysisResult};
 use crate::conflict_detector::{ConflictDetector, ConflictDetectionResult};
@@ -182,7 +182,8 @@ impl RelationalAnalyzer {
     fn build_function_environment(&mut self, doc: &AispDocument) -> AispResult<()> {
         for block in &doc.blocks {
             if let AispBlock::Functions(funcs_block) = block {
-                for (name, func_def) in &funcs_block.functions {
+                for func_def in &funcs_block.functions {
+                    let name = &func_def.name;
                     if self.function_env.contains_key(name) {
                         self.warnings.push(AispWarning::warning(
                             format!("Function '{}' redefined, using first definition", name)
@@ -210,14 +211,15 @@ impl RelationalAnalyzer {
         // Check type consistency in function signatures
         for block in &doc.blocks {
             if let AispBlock::Functions(funcs_block) = block {
-                for (func_name, func_def) in &funcs_block.functions {
+                for func_def in &funcs_block.functions {
+                    let func_name = &func_def.name;
                     // Validate parameter types exist
                     for param in &func_def.lambda.parameters {
                         if let Some(param_type) = self.infer_parameter_type(param, &func_def.lambda) {
                             if !self.is_valid_type(&param_type) {
                                 violations.push(TypeViolation {
                                     id: format!("tv_{}", violation_id),
-                                    types: vec![param.clone(), param_type.clone()],
+                                    types: vec![param.to_string(), param_type.clone()],
                                     description: format!(
                                         "Parameter '{}' in function '{}' has undefined type '{}'",
                                         param, func_name, param_type
@@ -415,7 +417,7 @@ impl Default for RelationalAnalyzer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::Span;
+    use crate::ast::canonical::Span;
 
     fn create_test_span() -> Span {
         Span::new(1, 1, 1, 10)
