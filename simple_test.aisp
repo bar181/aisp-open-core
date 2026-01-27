@@ -6,8 +6,9 @@
 
 ⟦Σ:Types⟧{
   Signal≜V_H⊕V_L⊕V_S
-  V_H≜ℝ⁷⁶⁸
-  V_S≜ℝ²⁵⁶
+  V_H≜ℝ⁷⁶⁸:semantic
+  V_L≜ℝ⁵¹²:structural
+  V_S≜ℝ²⁵⁶:safety
 }
 
 ⟦Λ:Functions⟧{

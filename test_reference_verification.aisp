@@ -1,0 +1,52 @@
+𝔸5.1.reference-test@2026-01-27
+γ≔reference.verification.challenge
+ρ≔⟨architecture,features,validation,theorems,agent-guide⟩
+⊢ND∧CAT∧ΠΣ
+
+⟦Ω:Meta⟧{
+  ∀D∈AISP:Ambig(D)<0.02
+  Ambig≜λD.1-|Parse_u(D)|/|Parse_t(D)|
+  Vision≜"Assembly language for AI cognition"
+}
+
+⟦Σ:Types⟧{
+  ;; Tri-Vector Signal (768+512+256=1536d)
+  Signal≜V_H⊕V_L⊕V_S
+  V_H≜ℝ⁷⁶⁸:semantic
+  V_L≜ℝ⁵¹²:structural
+  V_S≜ℝ²⁵⁶:safety
+  
+  ;; Quality Tiers
+  ◊≜{◊⁺⁺:δ≥0.75,◊⁺:δ≥0.60,◊:δ≥0.40,◊⁻:δ≥0.20,⊘:δ<0.20}
+}
+
+⟦Γ:Rules⟧{
+  ;; Core Invariant
+  ∀D∈AISP:Ambig(D)<0.02
+  
+  ;; Signal Orthogonality
+  V_H∩V_S≡∅
+  V_L∩V_S≡∅
+  V_H∩V_L≢∅
+}
+
+⟦Λ:Functions⟧{
+  ;; Parsing & Validation
+  δ:List⟨τ⟩→ℝ[0,1]
+  ⌈⌉:ℝ→◊
+  
+  ;; Ghost Intent Search
+  ψ_g:𝔹eam→ψ
+  ψ_g≜λb.ψ_*⊖ψ_have(b.G)
+  
+  ;; RossNet Scoring
+  μ_f:𝒫→ℝ
+  μ_f≜λx.σ(θ₁·sim_H(x)+θ₂·fit_L(x)+θ₃·aff_M(x))
+}
+
+⟦Ε⟧⟨
+δ≜0.85
+|𝔅|≜4/4
+φ≜97
+τ≜◊⁺⁺
+⟩

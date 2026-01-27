@@ -1,0 +1,50 @@
+𝔸5.1.reference-challenge@2026-01-27
+
+⟦Ω:Meta⟧{
+  Ambig≜λD.1-|Parse_u(D)|/|Parse_t(D)|
+}
+
+⟦Σ:Types⟧{
+  ;; Challenge 1: Tri-Vector Claims
+  Signal≜V_H⊕V_L⊕V_S
+  V_H≜ℝ⁷⁶⁸
+  V_L≜ℝ⁵¹²  
+  V_S≜ℝ²⁵⁶
+  
+  ;; Challenge 2: Quality Tier Thresholds
+  QualityTier≜{platinum,gold,silver,bronze,reject}
+  
+  ;; Challenge 3: Binding State Completeness
+  BindState≜{crash,null,adapt,zero}
+}
+
+⟦Γ:Rules⟧{
+  ;; Challenge 4: Ambiguity Threshold Claims
+  ∀D:Ambig(D)<0.02
+  
+  ;; Challenge 5: Vector Orthogonality Claims
+  V_H∩V_S≡∅
+  V_L∩V_S≡∅
+  
+  ;; Challenge 6: Pipeline Success Claims  
+  P_prose≜(0.62)ⁿ
+  P_aisp≜(0.98)ⁿ
+}
+
+⟦Λ:Funcs⟧{
+  ;; Challenge 7: Ghost Intent Definition
+  ψ_g≜λb.ψ_*⊖ψ_have
+  
+  ;; Challenge 8: RossNet Scoring Formula
+  μ_f≜λx.σ(θ₁·sim_H+θ₂·fit_L+θ₃·aff_M)
+  
+  ;; Challenge 9: Validation Function
+  validate≜⌈⌉∘δ∘Γ∘∂
+  
+  ;; Challenge 10: Tier Assignment Function
+  ⌈⌉≜λd.[≥¾↦◊⁺⁺,≥⅗↦◊⁺,≥⅖↦◊,≥⅕↦◊⁻,_↦⊘]
+}
+
+⟦Ε⟧⟨
+δ≜0.79
+⟩
