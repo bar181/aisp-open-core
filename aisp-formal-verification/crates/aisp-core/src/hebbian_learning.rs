@@ -298,13 +298,13 @@ impl HebbianValidator {
         
         for block in &document.blocks {
             if let AispBlock::Functions(functions_block) = block {
-                for (index, (name, function)) in functions_block.functions.iter().enumerate() {
+                for (index, function) in functions_block.functions.iter().enumerate() {
                     let episode = LearningEpisode {
-                        id: format!("function_{}", name),
+                        id: format!("function_{}", function.name),
                         outcome: self.classify_function_outcome(function)?,
                         weight_change: self.estimate_function_weight_change(function)?,
                         temporal_position: index,
-                        associated_element: name.clone(),
+                        associated_element: function.name.clone(),
                     };
                     episodes.push(episode);
                 }
@@ -395,6 +395,9 @@ impl HebbianValidator {
             }
             LogicalExpression::Temporal { operand, .. } => {
                 0.5 + self.calculate_expression_complexity(operand)
+            }
+            LogicalExpression::Raw(_) => {
+                0.2 // Simple complexity for raw expressions
             }
         }
     }

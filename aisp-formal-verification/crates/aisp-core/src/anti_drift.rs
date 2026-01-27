@@ -537,6 +537,9 @@ impl AntiDriftValidator {
             LogicalExpression::Temporal { operand, .. } => {
                 0.5 + self.calculate_expression_complexity(operand)
             }
+            LogicalExpression::Raw(_) => {
+                0.2 // Simple complexity for raw expressions
+            }
         }
     }
 

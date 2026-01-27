@@ -5,7 +5,7 @@
 //! constraints and safety isolation properties.
 
 use crate::{
-    ast::*,
+    ast::canonical::{CanonicalAispDocument as AispDocument, CanonicalAispBlock as AispBlock, *},
     error::*,
     z3_integration::*,
 };
