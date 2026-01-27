@@ -40,7 +40,14 @@ pub fn run_parse_bypass_tests() -> Vec<AttackResult> {
             success: false, // Placeholder
             bypass_achieved: false,
             security_impact: execution_engine.map_severity_to_security(attack.severity.clone()),
-            parser_response: crate::parser::robust_parser::ParseResult::default(),
+            parser_response: crate::parser::robust_parser::ParseResult {
+                document: None,
+                errors: vec![],
+                warnings: vec![],
+                recovery_applied: false,
+                partial_success: false,
+                security_issues: vec![],
+            },
             detection_triggered: false,
             mitigation_effective: true,
             performance_impact: PerformanceImpact {
@@ -129,7 +136,14 @@ mod integration_tests {
                 success: true,
                 bypass_achieved: true,
                 security_impact: crate::parser::robust_parser::SecuritySeverity::Critical,
-                parser_response: crate::parser::robust_parser::ParseResult::default(),
+                parser_response: crate::parser::robust_parser::ParseResult {
+                document: None,
+                errors: vec![],
+                warnings: vec![],
+                recovery_applied: false,
+                partial_success: false,
+                security_issues: vec![],
+            },
                 detection_triggered: false,
                 mitigation_effective: false,
                 performance_impact: PerformanceImpact {
@@ -145,7 +159,14 @@ mod integration_tests {
                 success: false,
                 bypass_achieved: false,
                 security_impact: crate::parser::robust_parser::SecuritySeverity::Low,
-                parser_response: crate::parser::robust_parser::ParseResult::default(),
+                parser_response: crate::parser::robust_parser::ParseResult {
+                document: None,
+                errors: vec![],
+                warnings: vec![],
+                recovery_applied: false,
+                partial_success: false,
+                security_issues: vec![],
+            },
                 detection_triggered: true,
                 mitigation_effective: true,
                 performance_impact: PerformanceImpact {

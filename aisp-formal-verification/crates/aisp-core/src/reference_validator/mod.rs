@@ -60,9 +60,7 @@ pub enum ComplianceLevel {
 impl ReferenceValidator {
     /// Create new reference validator
     pub fn new() -> AispResult<Self> {
-        let z3_verifier = Z3VerificationFacade::new().unwrap_or_else(|_| {
-            Z3VerificationFacade::new_disabled()
-        });
+        let z3_verifier = Z3VerificationFacade::new()?;
         
         Ok(Self {
             z3_verifier,
@@ -196,7 +194,7 @@ impl Default for ReferenceValidator {
         Self::new().unwrap_or_else(|_| {
             // Fallback with disabled Z3
             Self {
-                z3_verifier: Z3VerificationFacade::new_disabled(),
+                z3_verifier: Z3VerificationFacade::new().expect("Z3 verification required"),
                 verification_stats: VerificationStats {
                     features_verified: 0,
                     features_failed: 0,

@@ -5,7 +5,7 @@
 //! AISP document properties with mathematical rigor.
 
 use crate::{
-    ast::AispDocument,
+    ast::canonical::{CanonicalAispDocument as AispDocument},
     error::{AispError, AispResult},
     invariant_types::DiscoveredInvariant,
     satisfiability_checker::{SatisfiabilityChecker, SatisfiabilityResult, ConstraintModel},

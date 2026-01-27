@@ -524,7 +524,7 @@ impl AispSemantics {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::*;
+    use crate::ast::canonical::*;
     use std::collections::HashMap;
 
     // Inline test utility - replaced test_fixtures

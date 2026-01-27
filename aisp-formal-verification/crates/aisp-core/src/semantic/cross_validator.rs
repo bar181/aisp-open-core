@@ -396,7 +396,7 @@ impl CrossValidationChecker {
         };
 
         let behavioral_threat_level_score = match behavioral_results.security_assessment.threat_level {
-            crate::semantic::behavioral_verifier::ThreatLevel::None => 1.0,
+            crate::semantic::behavioral_verifier::ThreatLevel::Minimal => 1.0,
             crate::semantic::behavioral_verifier::ThreatLevel::Low => 0.8,
             crate::semantic::behavioral_verifier::ThreatLevel::Medium => 0.6,
             crate::semantic::behavioral_verifier::ThreatLevel::High => 0.3,
@@ -607,12 +607,15 @@ impl CrossValidationChecker {
         semantic_results: &DeepVerificationResult,
         behavioral_results: &BehavioralVerificationResult,
     ) -> ComplianceVerification {
-        let compliant = semantic_results.security_assessment.compliance_status.compliant && 
-                       behavioral_results.security_assessment.compliance_status.compliant;
+        let semantic_compliant = matches!(semantic_results.security_assessment.compliance_level, 
+            crate::semantic::deep_verifier::ComplianceLevel::FullyCompliant | 
+            crate::semantic::deep_verifier::ComplianceLevel::ExceedsCompliance);
+        let behavioral_compliant = matches!(behavioral_results.security_assessment.compliance_level,
+            crate::semantic::behavioral_verifier::ComplianceLevel::FullyCompliant |
+            crate::semantic::behavioral_verifier::ComplianceLevel::ExceedsCompliance);
+        let compliant = semantic_compliant && behavioral_compliant;
         
-        let mut verified_requirements = Vec::new();
-        verified_requirements.extend(semantic_results.security_assessment.compliance_status.missing_requirements.clone());
-        verified_requirements.extend(behavioral_results.security_assessment.compliance_status.violations.clone());
+        let verified_requirements = Vec::new(); // Simplified for now
         
         ComplianceVerification {
             compliant,

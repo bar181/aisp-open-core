@@ -314,7 +314,7 @@ impl BehaviorAnalyzer {
     }
 
     fn calculate_risk_level(&self, function_code: &str, output: &ExecutionOutput) -> f64 {
-        let mut risk = 0.0;
+        let mut risk: f64 = 0.0;
         
         if function_code.contains("exec") || function_code.contains("system") {
             risk += 0.8;
