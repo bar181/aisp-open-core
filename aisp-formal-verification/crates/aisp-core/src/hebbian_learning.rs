@@ -12,7 +12,10 @@
 //! - Temporal learning patterns must maintain consistency
 //!
 //! Hebbian learning validation ensures that AISP systems learn efficiently
+
 //! and maintain stable knowledge acquisition patterns.
+
+use crate::ast::canonical::{LogicalRule, LogicalExpression};
 
 use crate::{
     ast::canonical::{CanonicalAispDocument as AispDocument, CanonicalAispBlock as AispBlock, *},

@@ -256,7 +256,7 @@ impl PropertyBasedTester {
                 let result = self.execute_property_test(function_code, &test_case)?;
                 test_results.push(result);
                 self.test_statistics.total_tests += 1;
-                if result.passed {
+                if test_results.last().unwrap().passed {
                     self.test_statistics.passed_tests += 1;
                 }
             }
@@ -501,11 +501,14 @@ impl ComplianceValidator {
             }
         }
 
+        let is_compliant = violations.is_empty();
+        let compliance_score = if is_compliant { 1.0 } else { 0.7 };
+        
         Ok(ComplianceResult {
-            overall_compliant: violations.is_empty(),
+            overall_compliant: is_compliant,
             violations,
             passed_rules,
-            compliance_score: if violations.is_empty() { 1.0 } else { 0.7 },
+            compliance_score,
         })
     }
 

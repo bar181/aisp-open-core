@@ -55,8 +55,8 @@ impl AttackExecutionEngine {
                 success,
                 bypass_achieved,
                 security_impact: self.map_severity_to_security(attack.severity.clone()),
-                parser_response: parse_result,
                 detection_triggered: !parse_result.security_issues.is_empty(),
+                parser_response: parse_result,
                 mitigation_effective: !success,
                 performance_impact: PerformanceImpact {
                     parsing_time_ms: parsing_time.as_millis() as u64,

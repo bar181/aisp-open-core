@@ -10,7 +10,10 @@
 //! - Correction protocols: mechanisms to restore semantic stability
 //!
 //! Anti-drift validation is essential for maintaining reliable AI systems
+
 //! that preserve their intended behavior over extended periods.
+
+use crate::ast::canonical::{LogicalRule, LogicalExpression};
 
 use crate::{
     ast::canonical::{CanonicalAispDocument as AispDocument, CanonicalAispBlock as AispBlock, *},
