@@ -7,7 +7,7 @@
 
 **Version 3.0 (arXiv submission draft) — 2026-05-17**
 
-**Companion artifacts.** Reference implementation, full glossary, replication evidence, and toolchain (`aisp-converter`, `aisp-validator`) at [`github.com/bar181/aisp-open-core`](https://github.com/bar181/aisp-open-core). Authoritative protocol source: [`AI_GUIDE.md`](https://github.com/bar181/aisp-open-core/blob/main/AI_GUIDE.md) (AISP 5.1 Platinum). Canonical AISP-native version of this paper at `paper/AISP-formal-paper.aisp.md`; the present document is a derived human-readable view per the directional translation principle of §6.7.
+**Companion artifacts.** Reference implementation, full glossary, replication evidence, and toolchain (`aisp-converter`, `aisp-validator`) at [`github.com/bar181/aisp-open-core`](https://github.com/bar181/aisp-open-core). Authoritative protocol source: [`AI_GUIDE.md`](https://github.com/bar181/aisp-open-core/blob/main/AI_GUIDE.md) (AISP 5.1 Platinum). Canonical AISP-native version of this paper at `formal-papers/aisp-protocol.md`; the present document is a derived human-readable view per the directional translation principle of §6.7.
 
 ---
 
